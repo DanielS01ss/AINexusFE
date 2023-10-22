@@ -1,0 +1,12 @@
+.section{
+    margin-top:60px;
+}
+.section-heading-name{
+    float:left;
+    padding:5px;
+    font-size: 1.2rem;
+}
+
+.section-spaced{
+    margin-top: 40px;
+}
