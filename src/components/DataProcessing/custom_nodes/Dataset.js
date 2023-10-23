@@ -10,6 +10,8 @@ import { faRightLeft } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import {DATASET_FETCH_DATASET_INFO } from "../../../utils/apiEndpoints";
 import DataSelectDialog from '../dialogs/DataSelectDialog/DataSelectDialog';
+import {removeDataset, setNodes} from "../../../reducers/nodeSlice";
+import { useDispatch } from 'react-redux';
 import axios from "axios";
 
 export default memo(({ data, isConnectable }) => {
@@ -17,7 +19,9 @@ export default memo(({ data, isConnectable }) => {
   const [publishDate, setPublishDate] = useState("");
   const [selectDataDialog, setSelectDataDialog] = useState(false);
   const [datasetInfoNodeDialog, setDatasetInfoNodeDialog] = useState(false);
+  const dispatch = useDispatch();
   const datasetSelected = useSelector((state)=>state.selectedDataset);
+  const allNodes = useSelector((state)=>state.nodes);
 
   const fetchDatasetInfo = (datasetId)=>{
     axios.get(DATASET_FETCH_DATASET_INFO(datasetId))
@@ -37,12 +41,25 @@ export default memo(({ data, isConnectable }) => {
     setDatasetInfoNodeDialog(false);
   }
 
+ 
+  const deleteNode = ()=>{
+    let newNodeList = [...allNodes];
+    newNodeList = newNodeList.filter((node)=> node.nodeData.type!=="Dataset");
+    dispatch(setNodes(newNodeList));
+    setTimeout(()=>{
+      dispatch(removeDataset())
+    },100)
+    
+  }
+
   useEffect(()=>{
     fetchDatasetInfo(datasetSelected[0].id);
   },[datasetSelected])
 
+
   return (
-    <div style={{  borderRadius:"5%",padding:"10px" , border:"1px solid yellow" }}>
+    <div style={{  borderRadius:"5%",padding:"10px" , border:"1px solid yellow" }}> 
+     <p className='remove-node-btn-container' onClick={()=>{deleteNode()}}><span className='remove-node-btn'>x</span></p>
       <div>
         <div className='dataset-node-header'>
             <FontAwesomeIcon icon={faFile} /> Dataset

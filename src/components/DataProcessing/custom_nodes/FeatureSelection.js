@@ -15,12 +15,16 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import DataFeaturing from '../dialogs/DataFeaturing/DataFeaturing';
+import {setNodes, removeDataFeaturingColumns} from "../../../reducers/nodeSlice";
+import { useDispatch } from 'react-redux';
 
 export default memo(({ data, isConnectable }) => {
- 
+  
+  const dispatch = useDispatch();
   const dataFeaturing = useSelector((state)=>state.selectedDataFeaturingColumns);
   const [dataFeaturingOpen, setDataFeaturingOpen] = useState(false);
   const [rows,setRows] = useState([]);
+  const allNodes = useSelector((state)=>state.nodes);
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -39,7 +43,6 @@ export default memo(({ data, isConnectable }) => {
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover,
     },
-    // hide last border
     '&:last-child td, &:last-child th': {
       border: 0,
     },
@@ -56,6 +59,15 @@ export default memo(({ data, isConnectable }) => {
   
   const openEditSelectedRowsDialog = ()=>{
     setDataFeaturingOpen(true);
+  } 
+
+  const deleteNode = ()=>{
+    let newNodeList = [...allNodes];
+    newNodeList = newNodeList.filter((node)=> node.nodeData.type!=="Data featuring");
+    dispatch(setNodes(newNodeList));
+    setTimeout(()=>{
+      dispatch(removeDataFeaturingColumns());
+    },100);
   }
 
   useEffect(()=>{
@@ -72,6 +84,7 @@ export default memo(({ data, isConnectable }) => {
         isConnectable={isConnectable}
       />
       <div>
+      <p className='remove-node-btn-container' onClick={()=>{deleteNode()}}><span className='remove-node-btn'>x</span></p>
         <div className='dataset-node-header node-header-filter'>
             <FontAwesomeIcon icon={faFilter} /> Data featuring
         </div>

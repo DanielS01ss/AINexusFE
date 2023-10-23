@@ -14,9 +14,14 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Imputation from '../dialogs/Imputation/Imputation';
+import { useDispatch } from 'react-redux';
+import {setNodes} from "../../../reducers/nodeSlice";
 
 
 export default memo(({ data, isConnectable }) => {
+
+  const dispatch = useDispatch();
+  const allNodes = useSelector((state)=>state.nodes);
   const imputationAlgs = useSelector((state)=>{return state.imputationAlgs});
   const [rows, setRows] = useState([]);
   const [isImputationModalOpen, setIsImputationModalOpen] = useState(false);
@@ -40,6 +45,11 @@ export default memo(({ data, isConnectable }) => {
     },
   }));
 
+  const deleteNode = ()=>{
+    let newNodeList = [...allNodes];
+    newNodeList = newNodeList.filter((node)=> node.nodeData.type!=="Data Imputation");
+    dispatch(setNodes(newNodeList));
+  }
  
 
   useEffect(()=>{
@@ -62,6 +72,7 @@ export default memo(({ data, isConnectable }) => {
         isConnectable={isConnectable}
       />
       <div>
+        <p className='remove-node-btn-container' onClick={()=>{deleteNode()}}><span className='remove-node-btn'>x</span></p>
         <div className='dataset-node-header node-header-filter'>
             <FontAwesomeIcon icon={faDivide} /> Data imputation
         </div>
@@ -93,7 +104,7 @@ export default memo(({ data, isConnectable }) => {
             <div className='dataset-node-bottom-toolbox'>
                 <button className='dataset-toolbox-btn imputation-algs' onClick={()=>{setIsImputationModalOpen(true);}}>Edit imputation algs <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></button>
             </div>
-        </div>
+        </div> 
         <div className='dataset-node-bottom'>
 
         </div>

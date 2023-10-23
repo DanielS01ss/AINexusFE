@@ -19,18 +19,16 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import {DATASET_FETCH_DATASET_INFO , DATASET_FETCH_DATASET_SNIPPET} from "../../../../utils/apiEndpoints";
 import axios from "axios";
-import TextField from '@mui/material/TextField';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import {DataGrid} from '@mui/x-data-grid';
 import {useDispatch} from 'react-redux';
 import { setImputationAlgs } from '../../../../reducers/nodeSlice';
+import { faTableColumns } from '@fortawesome/free-solid-svg-icons';
+import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 import Paper from '@mui/material/Paper';
+
 
 export default function Imputation(props){
     const dispatch = useDispatch();
@@ -45,7 +43,12 @@ export default function Imputation(props){
     const [regressionImputationView, setRegressionImputationView] = useState(false);
     const [checked, setChecked] = React.useState([]);
     const [rows, setRows] = useState([]);
+    const [constantValueImputationRows, setConstantValueImputationRows] = useState([]);
+    const [checkedConstantValue, setCheckedConstantValue] = useState([]);
+    const [checkedModeImputationValues, setCheckedModeImputationValues] = useState([]);
+
     const dataset = useSelector((state)=>state.selectedDataset);
+
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
       [`&.${tableCellClasses.head}`]: {
         backgroundColor: theme.palette.common.black,
@@ -115,6 +118,9 @@ export default function Imputation(props){
       const enableViewBasedOnSelection = (selectedAlg)=>{
         if(selectedAlg == "KNN Imputation"){
           dispatch(setImputationAlgs(["KNN Imputation"]));
+          setConstantValueImputationView(false);
+          setModeImputationView(false);
+          setRegressionImputationView(false);
         }
         else if(selectedAlg == "Constant Value Imputation"){
             setConstantValueImputationView(true);
@@ -160,10 +166,38 @@ export default function Imputation(props){
         setChecked(newChecked);
       };
 
+      const handleToggleConstVal = (value) => () => {
+        const currentIndex = checkedConstantValue.findIndex((item,index) => {return item.column_name === value.column_name && item.sample_data === value.sample_data;});
+        const newChecked = [...checkedConstantValue];
+        if (currentIndex === -1) {
+          newChecked.push(value);
+        } else {
+          newChecked.splice(currentIndex, 1);
+        }
+        setCheckedConstantValue(newChecked);
+      };
+
+
+      const handleToggleModeImputation = (value) => () => {
+        const currentIndex = checkedModeImputationValues.findIndex((item,index) => {return item.column_name === value.column_name && item.sample_data === value.sample_data;});
+        const newChecked = [...checkedModeImputationValues];
+        if (currentIndex === -1) {
+          newChecked.push(value);
+        } else {
+          newChecked.splice(currentIndex, 1);
+        }
+        
+        setCheckedConstantValue(newChecked);
+      };
+
+
       const handleDone = ()=>{
         props.handleClose();
       }
-
+ 
+      useEffect(()=>{
+        parseAndSetData(dataset);
+      },[dataset])
 
     return (
     <div>
@@ -186,8 +220,7 @@ export default function Imputation(props){
                          pointerEvents:"none"
                         }}
                       >
-                        <ListItemButton>
-                          
+                        <ListItemButton> 
                           <ListItemText  id={'fd3432'}  disableTypography
                           primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}> Imputation algorithm</Typography>} />
                         </ListItemButton>
@@ -219,7 +252,6 @@ export default function Imputation(props){
                           </ListItemButton>
                         </ListItem>
                       );
-                     
                     
                    })}
                  </List> 
@@ -227,114 +259,251 @@ export default function Imputation(props){
                  {constValueImputationView && 
                  <div className='section'>
                     <h1>Constant Value Imputation</h1>
-                  
-                    <Box sx={{ height: 400, width: '80%', margin:"auto", marginTop:"40px" }}  bgcolor="black" >
-                      <DataGrid
-                        rows={rows}
-                        columns={columns}
-                        initialState={{
-                          pagination: {
-                            paginationModel: {
-                              pageSize: 5,
-                            },
-                          },
-                        }}
-                        pageSizeOptions={[5]}
-                        checkboxSelection
-                        disableRowSelectionOnClick
-                      />
-                   </Box>
-
-                    <TableContainer component={Paper} sx={{mt:"50px"}}>
-                      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                        <TableHead>
-                          <TableRow>
-                            <StyledTableCell>Column Name</StyledTableCell>
-                            <StyledTableCell align="center">Constant Value</StyledTableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {rows.map((row,index) => {
+                    <Box sx={{ height: 400, width: '90%', margin:"auto",borderRadius:"5px" }}  bgcolor="black" >
+                    <List dense sx={{ width: '100%', bgcolor: 'background.paper', marginTop:"10px",borderRadius:"5px", padding:"10px" }}>
+                      <ListItem
+                          key={"my-key"}
+                          secondaryAction={
+                            <div className='dataset-select-toolbox'>
+                              <p>Select</p>
                             
-                            return(   
-                            <StyledTableRow key={index}>
-                               <StyledTableCell component="th" scope="row">
-                                 {row.column_name}
-                               </StyledTableCell>
-                              <StyledTableCell align="center"> <TextField id="outlined-basic" label="Insert value" variant="outlined" /></StyledTableCell>
-                            </StyledTableRow>
-                            )
-                           }
-                          )}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
+                            </div>
+                          }
+                          disablePadding
+                          sx={{
+                          padding:"5px",
+                          pointerEvents:"none"
+                          }}
+                        >
+                          <ListItemButton>
+                            
+                            <ListItemText  id={'fd3432'}  disableTypography
+                            primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>Column Name</Typography>} />
+                          </ListItemButton>
+                        </ListItem>
+                    {rows.map((value) => {
+                      const labelId = `checkbox-list-secondary-label-${value}`;
+                      
+                        return (
+                          <ListItem
+                            key={value.id}
+                            secondaryAction={
+                              <div className='dataset-select-toolbox'>
+                                <Checkbox
+                                  edge="end"
+                                  onChange={handleToggleConstVal(value)}
+                                  checked={checkedConstantValue.find(item => {return item.column_name === value.column_name && item.sample_data === value.sample_data;})}
+                                  inputProps={{ 'aria-labelledby': labelId }}
+                                />
+                                
+                              </div>
+                            }
+                            disablePadding
+                          > 
+                            <ListItemButton>
+                              <ListItemAvatar>
+                                <p className='select-dialog-list'><FontAwesomeIcon icon={faTableColumns}/></p> 
+                              </ListItemAvatar>
+                              <ListItemText  id={labelId}  disableTypography
+                              primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>{value.column_name}</Typography>} />
+                            </ListItemButton>
+                          </ListItem>
+                        );
+                      
+                    })}
+                  </List>
+                  <div>
+                    {checkedConstantValue.map((val)=>{
+                    
+                      return(
+                      <div className='select-box'>
+                      <p>{val.column_name}</p>
+                        <div>
+                          <input className='const-val-input' placeholder='Insert value'/>
+                        </div>
+                        <Button variant="outlined" onClick={()=>{}}>SUBMIT</Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  </Box>
                  </div>
                  }
                  {
                   modeImputationView && 
                   <div className='section'>
                     <h1>Mode Imputation</h1>
-                      <Box sx={{ height: 400, width: '60%', margin:"auto", marginTop:"40px" }}  bgcolor="black" >
-                          <DataGrid
-                            rows={rows}
-                            columns={columns}
-                            initialState={{
-                              pagination: {
-                                paginationModel: {
-                                  pageSize: 5,
-                                },
-                              },
+                    <Box sx={{ height: 400, width: '90%', margin:"auto",borderRadius:"5px" }}  bgcolor="black" >
+                      <List dense sx={{ width: '100%', bgcolor: 'background.paper', marginTop:"10px",borderRadius:"5px", padding:"10px" }}>
+                        <ListItem
+                            key={"my-key"}
+                            secondaryAction={
+                              <div className='dataset-select-toolbox'>
+                                <p>Select</p>
+                              
+                              </div>
+                            }
+                            disablePadding
+                            sx={{
+                            padding:"5px",
+                            pointerEvents:"none"
                             }}
-                              pageSizeOptions={[5]}
-                              checkboxSelection
-                              disableRowSelectionOnClick
-                            />
-                        </Box>
+                          >
+                            <ListItemButton>
+                              
+                              <ListItemText  id={'fd3432'}  disableTypography
+                              primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>Column Name</Typography>} />
+                            </ListItemButton>
+                          </ListItem>
+                      {rows.map((value) => {
+                        const labelId = `checkbox-list-secondary-label-${value}`;
+                        console.log(value);
+                          return (
+                            <ListItem
+                              key={value.id}
+                              secondaryAction={
+                                <div className='dataset-select-toolbox'>
+                                  <Checkbox
+                                    edge="end"
+                                    onChange={handleToggleModeImputation(value)}
+                                    checked={checkedModeImputationValues.find(item => {return item.column_name === value.column_name && item.sample_data === value.sample_data;})}
+                                    inputProps={{ 'aria-labelledby': labelId }}
+                                  />
+                                </div>
+                              }
+                              disablePadding
+                            > 
+                              <ListItemButton>
+                                <ListItemAvatar>
+                                  <p className='select-dialog-list'><FontAwesomeIcon icon={faTableColumns}/></p> 
+                                </ListItemAvatar>
+                                <ListItemText  id={labelId}  disableTypography
+                                primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>{value.column_name}</Typography>} />
+                              </ListItemButton>
+                            </ListItem>
+                          );
+                        
+                       })}
+                      </List>
+                    </Box>
                   </div>
                  }
                  {
                   regressionImputationView && 
                   <>
                     <div className='section-spaced'>
-                    <h2>Regression Value Imputation Target Columns</h2>
-                       <Box sx={{ height: 400, width: '60%', margin:"auto", marginTop:"40px" }}  bgcolor="black" >
-                          <DataGrid
-                            rows={rows}
-                            columns={columns}
-                            initialState={{
-                              pagination: {
-                                paginationModel: {
-                                  pageSize: 5,
-                                },
-                              },
-                            }}
-                              pageSizeOptions={[5]}
-                              checkboxSelection
-                              disableRowSelectionOnClick
-                            />
-                        </Box>       
+                    <Box sx={{ height: 400, width: '90%', margin:"auto",borderRadius:"5px" }}  bgcolor="black" > 
+                        <h2>Regression Value Imputation Target Columns</h2> 
+                          <List dense sx={{ width: '100%', bgcolor: 'background.paper', marginTop:"10px",borderRadius:"5px", padding:"10px" }}>
+                              <ListItem
+                                  key={"my-key"}
+                                  secondaryAction={
+                                    <div className='dataset-select-toolbox'>
+                                      <p>Select</p>
+                                    
+                                    </div>
+                                  }
+                                  disablePadding
+                                  sx={{
+                                  padding:"5px",
+                                  pointerEvents:"none"
+                                  }}
+                                >
+                                  <ListItemButton>
+                                    
+                                    <ListItemText  id={'fd3432'}  disableTypography
+                                    primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>Column Name</Typography>} />
+                                  </ListItemButton>
+                                </ListItem>
+                            {rows.map((value) => {
+                              const labelId = `checkbox-list-secondary-label-${value}`;
+                              console.log(value);
+                                return (
+                                  <ListItem
+                                    key={value.id}
+                                    secondaryAction={
+                                      <div className='dataset-select-toolbox'>
+                                        <Checkbox
+                                          edge="end"
+                                          onChange={handleToggle(value)}
+                                          checked={checked.find(item => {return item.column_name === value.column_name && item.sample_data === value.sample_data;})}
+                                          inputProps={{ 'aria-labelledby': labelId }}
+                                        />
+                                        
+                                      </div>
+                                    }
+                                    disablePadding
+                                  > 
+                                    <ListItemButton>
+                                      <ListItemAvatar>
+                                        <p className='select-dialog-list'><FontAwesomeIcon icon={faTableColumns}/></p> 
+                                      </ListItemAvatar>
+                                      <ListItemText  id={labelId}  disableTypography
+                                      primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>{value.column_name}</Typography>} />
+                                    </ListItemButton>
+                                  </ListItem>
+                                );
+                              
+                            })}
+                          </List>
+                       </Box> 
                         </div>
                         <div className='section-spaced'>
+                          <Box sx={{ height: 400, width: '90%', margin:"auto",borderRadius:"5px", marginTop:"400px" }}  bgcolor="black" >
                           <h2>Regression Value Imputation Feature Columns</h2>
-                          <Box sx={{ height: 400, width: '60%', margin:"auto", marginTop:"40px" }}  bgcolor="black" >
-                              <DataGrid
-                                rows={rows}
-                                columns={columns}
-                                initialState={{
-                                  pagination: {
-                                    paginationModel: {
-                                      pageSize: 5,
-                                    },
-                                  },
-                                }}
-                                  pageSizeOptions={[5]}
-                                  checkboxSelection
-                                  disableRowSelectionOnClick
-                                />
-                            </Box>           
+                            <List dense sx={{ width: '100%', bgcolor: 'background.paper', marginTop:"10px",borderRadius:"5px", padding:"10px" }}>
+                              <ListItem
+                                  key={"my-key"}
+                                  secondaryAction={
+                                    <div className='dataset-select-toolbox'>
+                                      <p>Select</p>
+                                    
+                                    </div>
+                                  }
+                                  disablePadding
+                                  sx={{
+                                  padding:"5px",
+                                  pointerEvents:"none"
+                                  }}
+                                >
+                                  <ListItemButton>
+                                    
+                                    <ListItemText  id={'fd3432'}  disableTypography
+                                    primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>Column Name</Typography>} />
+                                  </ListItemButton>
+                                </ListItem>
+                            {rows.map((value) => {
+                              const labelId = `checkbox-list-secondary-label-${value}`;
+                              console.log(value);
+                                return (
+                                  <ListItem
+                                    key={value.id}
+                                    secondaryAction={
+                                      <div className='dataset-select-toolbox'>
+                                        <Checkbox
+                                          edge="end"
+                                          onChange={handleToggle(value)}
+                                          checked={checked.find(item => {return item.column_name === value.column_name && item.sample_data === value.sample_data;})}
+                                          inputProps={{ 'aria-labelledby': labelId }}
+                                        />
+                                        
+                                      </div>
+                                    }
+                                    disablePadding
+                                  > 
+                                    <ListItemButton>
+                                      <ListItemAvatar>
+                                        <p className='select-dialog-list'><FontAwesomeIcon icon={faTableColumns}/></p> 
+                                      </ListItemAvatar>
+                                      <ListItemText  id={labelId}  disableTypography
+                                      primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>{value.column_name}</Typography>} />
+                                    </ListItemButton>
+                                  </ListItem>
+                                );
+                              })}
+                            </List>
+                          </Box>
                         </div>
-                     
                   </>
                  }
                 </DialogContent>

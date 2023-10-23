@@ -62,15 +62,50 @@ function Flow() {
   };
 
 
+  const containsNode = (nodeType, allNodes)=>{
+   
+    const foundNodeOfType = allNodes.find((node)=> node.data.label == nodeType);
+    if(foundNodeOfType){
+      return true;
+    }
+    return false;
+  }
+
+
+  const checkAndRemoveNode = (nodeData, nodes)=>{
+    const newNodeArr = [];
+    const nodeRemoved = [];
+    for(const node of nodes){
+      if(nodeData.includes(node.data.label)){
+        newNodeArr.push(node);
+      } else {
+        nodeRemoved.push(node);
+      }
+    }
+
+    const updatedEdges = [];
+    for(const edge of edges){
+      if(edge.source == nodeRemoved[0].id || edge.target == nodeRemoved[0].id){
+        continue;
+      }
+      updatedEdges.push(edge);
+    }
+    setEdges(updatedEdges);
+    setNodes(newNodeArr);
+  }
+
 
   const addNode = (nodeData) => {
-
     const newNodes = [...nodes];
-
+    
+    if(nodeData.length < nodes.length){
+      checkAndRemoveNode(nodeData,nodes);
+      return;
+    }
+    
     for(let nodeType of nodeData){
       
-      
-      if(nodeType == "Dataset"){
+      if(nodeType == "Dataset" && !containsNode(nodeType,nodes)){
       
         newNodes.push({
           id: 'node-2',
@@ -80,18 +115,18 @@ function Flow() {
        });
       
       } 
-      if (nodeType == "Data featuring"){
+      if (nodeType == "Data featuring" && !containsNode(nodeType,nodes)){
         
         newNodes.push(
           {
            id: 'node-1',
            type: 'featureSelection',
-           data: { label: 'Feature Selection' },
+           data: { label: 'Data featuring' },
            position: { x: 850, y: 5 },
           });
         
       }  
-      if (nodeType == "Normalization"){
+      if (nodeType == "Normalization" && !containsNode(nodeType,nodes)){
       
         newNodes.push(
           {
@@ -103,7 +138,7 @@ function Flow() {
         );
         
       } 
-      if (nodeType == "Data Imputation"){
+      if (nodeType == "Data Imputation" && !containsNode(nodeType,nodes)){
         
         newNodes.push(
           {
@@ -115,7 +150,7 @@ function Flow() {
         ); 
         
       } 
-      if (nodeType == "Model Training"){
+      if (nodeType == "Model Training" && !containsNode(nodeType,nodes)){
         
         newNodes.push(
           {
@@ -131,14 +166,11 @@ function Flow() {
     setNodes(newNodes);
   }
 
-
-  const processAndPlaceNodes = (nodes) =>{
-  
+  const processAndPlaceNodes = (nodes) =>{ 
     const allNodes = [];
     for(let node of nodes){    
       allNodes.push(node.nodeData.type);   
     }
-
     addNode(allNodes);
   }
 
@@ -150,10 +182,10 @@ function Flow() {
     processAndPlaceNodes(storedNodes);
   },[storedNodes])
 
-  useEffect(()=>{
-    
+  useEffect(()=>{  
     deleteOneEdge(edgeToDelete);
   },[edgeToDelete])
+
 
     return (
       <div style={{ width: '96vw', height: '100vh' }}>

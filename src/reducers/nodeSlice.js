@@ -21,15 +21,28 @@ export const nodeSlice = createSlice({
                 id:nanoid(),
                 nodeData:action.payload
             }
+            const containsID = state.nodes.filter(obj => obj.nodeData.type == action.payload.type );
+            if(containsID.length == 0)
+            {
+                state.nodes.push(newNode);
+            }
             
-            state.nodes.push(newNode);
         } ,
+        setNodes:(state, action)=>{
+            state.nodes = action.payload
+        },
         removeNode:(state, action) =>{
             state.nodes = state.nodes.filter((node)=> node.id !== action.payload)
         }, 
         addDataset:(state,action) =>{
             state.selectedDataset = [];
             state.selectedDataset = [action.payload]
+        },
+        removeDataset:(state,action) =>{
+            state.selectedDataset = [];
+        },
+        removeDataFeaturingColumns:(state,action)=>{
+            state.selectedDataFeaturingColumns = [];
         },
         setSelectedModelType:(state,action)=>{
             state.selectedModelType = action.payload;
@@ -49,11 +62,15 @@ export const nodeSlice = createSlice({
         setEdgeToDelete:(state,action)=>{
             state.edgeToDelete = action.payload;
         },
+        resetNormalizationAndStandardization:(state) =>{
+            state.normalizationColumns = [];
+            state.standardizationColumns = [];
+        }
         
     }
 });
 
 
-export const {addNode, removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete} = nodeSlice.actions
+export const {resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete} = nodeSlice.actions
 
 export default nodeSlice.reducer;

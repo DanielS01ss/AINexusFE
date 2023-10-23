@@ -15,13 +15,16 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import NormalizationStandardization from '../dialogs/NormalizationStandardization/NormalizationStandardization';
 import { useDispatch } from 'react-redux';
+import {resetNormalizationAndStandardization, setNodes} from "../../../reducers/nodeSlice";
 
 
 export default memo(({ data, isConnectable }) => {
   
+  const dispatch = useDispatch();
   const normalizationColumns = useSelector((state)=>state.normalizationColumns);
   const standardizationColumns = useSelector((state)=>state.standardizationColumns);
   const [allColumns, setAllColumns] = useState([]);
+  const allNodes = useSelector((state)=>state.nodes);
   const [normalizationStandarizationOpen, setNormalizationStandardizationOpen] = useState(false);
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -33,7 +36,7 @@ export default memo(({ data, isConnectable }) => {
     },
   }));
 
-  
+   
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover,
@@ -81,6 +84,17 @@ export default memo(({ data, isConnectable }) => {
     setAllColumns(finalResult);
   }
 
+  
+  const deleteNode = ()=>{
+    let newNodeList = [...allNodes];
+    newNodeList = newNodeList.filter((node)=> node.nodeData.type!=="Normalization");
+    dispatch(setNodes(newNodeList));
+    setTimeout(()=>{
+      dispatch(resetNormalizationAndStandardization());
+    },100)
+
+  }
+
   useEffect(()=>{
     combineAndSet();
   },[standardizationColumns, normalizationColumns])
@@ -95,6 +109,7 @@ export default memo(({ data, isConnectable }) => {
         isConnectable={isConnectable}
       />
       <div>
+      <p className='remove-node-btn-container' onClick={()=>{deleteNode()}}><span className='remove-node-btn'>x</span></p>
         <div className='dataset-node-header node-header-filter'>
             <FontAwesomeIcon icon={faSquareRootVariable} /> Normalization and Standardization
         </div>

@@ -14,6 +14,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { useDispatch } from 'react-redux';
+import { useSelector } from "react-redux/es/hooks/useSelector";
+import {resetNormalizationAndStandardization, setNodes} from "../../../reducers/nodeSlice";
 
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
@@ -23,6 +26,8 @@ function createData(name, calories, fat, carbs, protein) {
 
 export default memo(({ data, isConnectable }) => {
  
+  const dispatch = useDispatch();
+  const allNodes = useSelector((state)=>state.nodes);
   const rows = [
     createData('Training loss', 159),
     createData('Validation Loss', 237),
@@ -34,6 +39,16 @@ export default memo(({ data, isConnectable }) => {
       mode: 'dark',
     },
   });
+
+  const deleteNode = ()=>{
+    let newNodeList = [...allNodes];
+    newNodeList = newNodeList.filter((node)=> node.nodeData.type!=="Model Training");
+    dispatch(setNodes(newNodeList));
+    setTimeout(()=>{
+      dispatch(resetNormalizationAndStandardization());
+    },100)
+
+  }
 
 
   return (
@@ -50,7 +65,7 @@ export default memo(({ data, isConnectable }) => {
             <FontAwesomeIcon icon={faDiagramProject} /> Model training
         </div>
         <div className='dataset-node-separator'>
-
+        <p className='remove-node-btn-container' onClick={()=>{deleteNode()}}><span className='remove-node-btn'>x</span></p>
         </div>
         <div className='dataset-node-info-section'>
             <h3>  </h3>

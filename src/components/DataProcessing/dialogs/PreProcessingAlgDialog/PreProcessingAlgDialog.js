@@ -56,6 +56,7 @@ export default function PreProcessingAlgDialog (props) {
     const allAlgorithms = ['Procedure name','Data featuring','Normalization','Data Imputation']
    
     const handleSelectedAlgorithms = ()=>{
+      
          const listOfNodes = [];
          for(let alg of checked){
           const newNode = {
