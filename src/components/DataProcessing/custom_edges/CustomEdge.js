@@ -27,8 +27,13 @@ export default function CustomEdge({
   const dispatch = useDispatch();
 
   const onEdgeClick = (evt, id) => {
+   
     evt.stopPropagation();
-    dispatch(setEdgeToDelete(id));
+    dispatch(setEdgeToDelete(""));
+    setTimeout(()=>{
+      dispatch(setEdgeToDelete(id));
+    },100)
+    
   };
   
 

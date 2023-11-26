@@ -22,30 +22,30 @@ import axios from "axios";
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
-import {DataGrid} from '@mui/x-data-grid';
 import {useDispatch} from 'react-redux';
-import { setImputationAlgs } from '../../../../reducers/nodeSlice';
+import { setImputationAlgs, setConstantValueImputationColumns, setStoredConstantValueImputationValues } from '../../../../reducers/nodeSlice';
 import { faTableColumns } from '@fortawesome/free-solid-svg-icons';
-import { faDatabase } from '@fortawesome/free-solid-svg-icons';
-import Paper from '@mui/material/Paper';
+
 
 
 export default function Imputation(props){
     const dispatch = useDispatch();
     const imputationAlgs = useSelector((state)=>{return state.imputationAlgs});
+    const constant_value_imputation_columns = useSelector((state)=>{return state.constant_value_imputation_columns});
+    const constant_value_imputation_values = useSelector((state)=>{return state.constant_value_imputation_values});
     const [datasetName, setDatasetName] = useState("");
     const [isLoadingId , setIsLoadingId] = useState(true);
     const [datasetId, setDatasetId] = useState(0);
     const [fetchedDatasetInfo, setFetchedDatasetInfo] = useState({});
     const [snippet, setSnippet] = useState([]);
     const [constValueImputationView, setConstantValueImputationView] = useState(false);
-    const [modeImputationView, setModeImputationView] = useState(false);
-    const [regressionImputationView, setRegressionImputationView] = useState(false);
+
     const [checked, setChecked] = React.useState([]);
     const [rows, setRows] = useState([]);
     const [constantValueImputationRows, setConstantValueImputationRows] = useState([]);
     const [checkedConstantValue, setCheckedConstantValue] = useState([]);
-    const [checkedModeImputationValues, setCheckedModeImputationValues] = useState([]);
+    const [constantValueImputationValues, setConstantValueImputationValues] = useState([]);
+    const [initialRender, setInitialRender] = useState(true);
 
     const dataset = useSelector((state)=>state.selectedDataset);
 
@@ -76,7 +76,7 @@ export default function Imputation(props){
       },
     });
     const columns = [{field:"id", headerName:"ID", width:60},{field:"column_name", headerName:"Column Name", width:320},{field:"sample_data", headerName:"Sample Data", width:230}]
-    const allImputationAlgs = ["KNN Imputation","Constant Value Imputation","Mode Imputation","Regression Imputation"];
+    const allImputationAlgs = ["KNN Imputation","Constant Value Imputation"];
     const parseAndSetData = (data)=>{
       setDatasetName(data[0].dataset_name);
       setDatasetId(data[0].id);
@@ -119,29 +119,19 @@ export default function Imputation(props){
         if(selectedAlg == "KNN Imputation"){
           dispatch(setImputationAlgs(["KNN Imputation"]));
           setConstantValueImputationView(false);
-          setModeImputationView(false);
-          setRegressionImputationView(false);
+          
+          dispatch(setConstantValueImputationColumns([]))
         }
         else if(selectedAlg == "Constant Value Imputation"){
             setConstantValueImputationView(true);
-            setModeImputationView(false);
-            setRegressionImputationView(false);
+            
             dispatch(setImputationAlgs(["Constant Value Imputation"]));
-        } else if(selectedAlg == "Mode Imputation"){
-            setConstantValueImputationView(false);
-            setModeImputationView(true);
-            setRegressionImputationView(false);
-            dispatch(setImputationAlgs(["Mode Imputation"]));
-        } else if(selectedAlg == "Regression Imputation"){
-          setConstantValueImputationView(false);
-          setModeImputationView(false);
-          setRegressionImputationView(true);
-          dispatch(setImputationAlgs(["Regression Imputation"]));
+            dispatch(setConstantValueImputationColumns([]))
         } else {
           setConstantValueImputationView(false);
-          setModeImputationView(false);
-          setRegressionImputationView(false);
+         
           dispatch(setImputationAlgs([]));
+          dispatch(setConstantValueImputationColumns([]))
         }
       }
 
@@ -175,29 +165,54 @@ export default function Imputation(props){
           newChecked.splice(currentIndex, 1);
         }
         setCheckedConstantValue(newChecked);
-      };
-
-
-      const handleToggleModeImputation = (value) => () => {
-        const currentIndex = checkedModeImputationValues.findIndex((item,index) => {return item.column_name === value.column_name && item.sample_data === value.sample_data;});
-        const newChecked = [...checkedModeImputationValues];
-        if (currentIndex === -1) {
-          newChecked.push(value);
-        } else {
-          newChecked.splice(currentIndex, 1);
+        dispatch(setConstantValueImputationColumns(newChecked));
+        const constValsImputation = constantValueImputationValues;
+        for(const val in newChecked.length){
+          constValsImputation.push("");
         }
         
-        setCheckedConstantValue(newChecked);
+        setConstantValueImputationValues(constValsImputation);
       };
-
 
       const handleDone = ()=>{
         props.handleClose();
       }
+
+      const updateConstValue = (evt,index)=>{
+        const storedValues = [...constantValueImputationValues];
+        storedValues[index] = evt.target.value;
+        
+        setConstantValueImputationValues(storedValues);      
+     }
+
+     const submitTheNewValues = ()=>{
+      dispatch(setStoredConstantValueImputationValues(constantValueImputationValues));
+     }
  
       useEffect(()=>{
         parseAndSetData(dataset);
       },[dataset])
+
+      useEffect(()=>{
+        setChecked(imputationAlgs);
+       
+        if(imputationAlgs == "Constant Value Imputation"){
+         
+          setConstantValueImputationView(true);
+        } 
+      },[imputationAlgs])
+
+      useEffect(()=>{
+        setCheckedConstantValue(constant_value_imputation_columns);
+      },[constant_value_imputation_columns])
+
+    useEffect(()=>{
+      if (initialRender) {
+        setConstantValueImputationValues(constant_value_imputation_values);
+        setInitialRender(false);
+      } 
+  
+    },[constant_value_imputation_values])
 
     return (
     <div>
@@ -313,199 +328,24 @@ export default function Imputation(props){
                     })}
                   </List>
                   <div>
-                    {checkedConstantValue.map((val)=>{
-                    
+                    {checkedConstantValue.map((val, index)=>{
                       return(
                       <div className='select-box'>
                       <p>{val.column_name}</p>
                         <div>
-                          <input className='const-val-input' placeholder='Insert value'/>
+                          <input className='const-val-input' value={constantValueImputationValues[index]} onChange={(evt)=>updateConstValue(evt,index)}  placeholder='Insert value'/>
                         </div>
-                        <Button variant="outlined" onClick={()=>{}}>SUBMIT</Button>
+                        
                         </div>
                       );
                     })}
+                      <Button variant="outlined" onClick={()=>{submitTheNewValues()}}>SUBMIT</Button>
                   </div>
                   </Box>
                  </div>
                  }
-                 {
-                  modeImputationView && 
-                  <div className='section'>
-                    <h1>Mode Imputation</h1>
-                    <Box sx={{ height: 400, width: '90%', margin:"auto",borderRadius:"5px" }}  bgcolor="black" >
-                      <List dense sx={{ width: '100%', bgcolor: 'background.paper', marginTop:"10px",borderRadius:"5px", padding:"10px" }}>
-                        <ListItem
-                            key={"my-key"}
-                            secondaryAction={
-                              <div className='dataset-select-toolbox'>
-                                <p>Select</p>
-                              
-                              </div>
-                            }
-                            disablePadding
-                            sx={{
-                            padding:"5px",
-                            pointerEvents:"none"
-                            }}
-                          >
-                            <ListItemButton>
-                              
-                              <ListItemText  id={'fd3432'}  disableTypography
-                              primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>Column Name</Typography>} />
-                            </ListItemButton>
-                          </ListItem>
-                      {rows.map((value) => {
-                        const labelId = `checkbox-list-secondary-label-${value}`;
-                        console.log(value);
-                          return (
-                            <ListItem
-                              key={value.id}
-                              secondaryAction={
-                                <div className='dataset-select-toolbox'>
-                                  <Checkbox
-                                    edge="end"
-                                    onChange={handleToggleModeImputation(value)}
-                                    checked={checkedModeImputationValues.find(item => {return item.column_name === value.column_name && item.sample_data === value.sample_data;})}
-                                    inputProps={{ 'aria-labelledby': labelId }}
-                                  />
-                                </div>
-                              }
-                              disablePadding
-                            > 
-                              <ListItemButton>
-                                <ListItemAvatar>
-                                  <p className='select-dialog-list'><FontAwesomeIcon icon={faTableColumns}/></p> 
-                                </ListItemAvatar>
-                                <ListItemText  id={labelId}  disableTypography
-                                primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>{value.column_name}</Typography>} />
-                              </ListItemButton>
-                            </ListItem>
-                          );
-                        
-                       })}
-                      </List>
-                    </Box>
-                  </div>
-                 }
-                 {
-                  regressionImputationView && 
-                  <>
-                    <div className='section-spaced'>
-                    <Box sx={{ height: 400, width: '90%', margin:"auto",borderRadius:"5px" }}  bgcolor="black" > 
-                        <h2>Regression Value Imputation Target Columns</h2> 
-                          <List dense sx={{ width: '100%', bgcolor: 'background.paper', marginTop:"10px",borderRadius:"5px", padding:"10px" }}>
-                              <ListItem
-                                  key={"my-key"}
-                                  secondaryAction={
-                                    <div className='dataset-select-toolbox'>
-                                      <p>Select</p>
-                                    
-                                    </div>
-                                  }
-                                  disablePadding
-                                  sx={{
-                                  padding:"5px",
-                                  pointerEvents:"none"
-                                  }}
-                                >
-                                  <ListItemButton>
-                                    
-                                    <ListItemText  id={'fd3432'}  disableTypography
-                                    primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>Column Name</Typography>} />
-                                  </ListItemButton>
-                                </ListItem>
-                            {rows.map((value) => {
-                              const labelId = `checkbox-list-secondary-label-${value}`;
-                              console.log(value);
-                                return (
-                                  <ListItem
-                                    key={value.id}
-                                    secondaryAction={
-                                      <div className='dataset-select-toolbox'>
-                                        <Checkbox
-                                          edge="end"
-                                          onChange={handleToggle(value)}
-                                          checked={checked.find(item => {return item.column_name === value.column_name && item.sample_data === value.sample_data;})}
-                                          inputProps={{ 'aria-labelledby': labelId }}
-                                        />
-                                        
-                                      </div>
-                                    }
-                                    disablePadding
-                                  > 
-                                    <ListItemButton>
-                                      <ListItemAvatar>
-                                        <p className='select-dialog-list'><FontAwesomeIcon icon={faTableColumns}/></p> 
-                                      </ListItemAvatar>
-                                      <ListItemText  id={labelId}  disableTypography
-                                      primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>{value.column_name}</Typography>} />
-                                    </ListItemButton>
-                                  </ListItem>
-                                );
-                              
-                            })}
-                          </List>
-                       </Box> 
-                        </div>
-                        <div className='section-spaced'>
-                          <Box sx={{ height: 400, width: '90%', margin:"auto",borderRadius:"5px", marginTop:"400px" }}  bgcolor="black" >
-                          <h2>Regression Value Imputation Feature Columns</h2>
-                            <List dense sx={{ width: '100%', bgcolor: 'background.paper', marginTop:"10px",borderRadius:"5px", padding:"10px" }}>
-                              <ListItem
-                                  key={"my-key"}
-                                  secondaryAction={
-                                    <div className='dataset-select-toolbox'>
-                                      <p>Select</p>
-                                    
-                                    </div>
-                                  }
-                                  disablePadding
-                                  sx={{
-                                  padding:"5px",
-                                  pointerEvents:"none"
-                                  }}
-                                >
-                                  <ListItemButton>
-                                    
-                                    <ListItemText  id={'fd3432'}  disableTypography
-                                    primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>Column Name</Typography>} />
-                                  </ListItemButton>
-                                </ListItem>
-                            {rows.map((value) => {
-                              const labelId = `checkbox-list-secondary-label-${value}`;
-                              console.log(value);
-                                return (
-                                  <ListItem
-                                    key={value.id}
-                                    secondaryAction={
-                                      <div className='dataset-select-toolbox'>
-                                        <Checkbox
-                                          edge="end"
-                                          onChange={handleToggle(value)}
-                                          checked={checked.find(item => {return item.column_name === value.column_name && item.sample_data === value.sample_data;})}
-                                          inputProps={{ 'aria-labelledby': labelId }}
-                                        />
-                                        
-                                      </div>
-                                    }
-                                    disablePadding
-                                  > 
-                                    <ListItemButton>
-                                      <ListItemAvatar>
-                                        <p className='select-dialog-list'><FontAwesomeIcon icon={faTableColumns}/></p> 
-                                      </ListItemAvatar>
-                                      <ListItemText  id={labelId}  disableTypography
-                                      primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>{value.column_name}</Typography>} />
-                                    </ListItemButton>
-                                  </ListItem>
-                                );
-                              })}
-                            </List>
-                          </Box>
-                        </div>
-                  </>
-                 }
+                 
+                
                 </DialogContent>
 
                 <DialogActions>

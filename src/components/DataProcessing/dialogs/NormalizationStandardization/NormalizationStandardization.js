@@ -137,6 +137,16 @@ export default function NormalizationStandardization(props){
       props.handleClose();
     }
 
+
+    useEffect(()=>{
+      setCheckedStandardization(standarizationColumns);
+    },[standarizationColumns])
+
+    useEffect(()=>{
+      setCheckedNormalization(normalizationColumns);
+    },[normalizationColumns])
+
+
     return (
     <div>
         <ThemeProvider theme={darkTheme}>

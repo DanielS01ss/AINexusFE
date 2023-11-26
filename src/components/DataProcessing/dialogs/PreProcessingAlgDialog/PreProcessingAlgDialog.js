@@ -18,7 +18,7 @@ import { Typography } from '@mui/material';
 import PreProcessingDialogInfo from "../PreProcessingDialogInfo/PreProcessingDialogInfo";
 import {useDispatch} from 'react-redux';
 import { useSelector } from "react-redux/es/hooks/useSelector";
-import { addAlgorithm, addNode } from "../../../../reducers/nodeSlice";
+import { addAlgorithm, addNode, removePreProcessingNodes, setNodes } from "../../../../reducers/nodeSlice";
 
 export default function PreProcessingAlgDialog (props) {
 
@@ -63,7 +63,18 @@ export default function PreProcessingAlgDialog (props) {
             type:alg
           }
           listOfNodes.push(newNode);
-         }
+        }
+
+        const newNodes = [];
+        for(const node of nodes){
+          if(node.nodeData.type == "Data featuring" || node.nodeData.type == "Normalization" || node.nodeData.type == "Data Imputation"){
+            continue;
+          }
+          newNodes.push(node);
+        }
+
+        dispatch(setNodes(newNodes));
+
         for(let node of listOfNodes){
           dispatch(addNode(node));
         }

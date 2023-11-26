@@ -20,6 +20,7 @@ import { useDispatch } from 'react-redux';
 
 export default memo(({ data, isConnectable }) => {
   
+  const dataset = useSelector((state)=>state.selectedDataset);
   const dispatch = useDispatch();
   const dataFeaturing = useSelector((state)=>state.selectedDataFeaturingColumns);
   const [dataFeaturingOpen, setDataFeaturingOpen] = useState(false);
@@ -70,6 +71,22 @@ export default memo(({ data, isConnectable }) => {
     },100);
   }
 
+  const isDatasetSelected = ()=>{
+    if( !dataset || dataset.length == 0){
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  const checkDatasetSelectedAndGo = ()=>{
+    if(isDatasetSelected() == true){
+      openEditSelectedRowsDialog()
+    } else {
+      alert("There was no dataset selected!");
+    }
+  }
+
   useEffect(()=>{
     populateRows(dataFeaturing);
   },[dataFeaturing])
@@ -117,7 +134,7 @@ export default memo(({ data, isConnectable }) => {
             </TableContainer>
             <hr/>
             <div className='dataset-node-bottom-toolbox'>
-                <button className='dataset-toolbox-btn' onClick={()=>{openEditSelectedRowsDialog()}}>See all selected rows <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></button>
+                <button className='dataset-toolbox-btn' onClick={()=>{checkDatasetSelectedAndGo()}}>See all selected rows <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></button>
             </div>
         </div>
         <div className='dataset-node-bottom'>

@@ -24,7 +24,7 @@ import style from "./DataSelectDialog.css";
 import DataSetInfo from './DataSetInfo';
 import {DATASET_FETCH_ALL_DATASETS} from "../../../../utils/apiEndpoints";
 import axios from "axios";
-import {addNode, addDataset} from "../../../../reducers/nodeSlice";
+import {addNode, addDataset, setNodes, clearDataset} from "../../../../reducers/nodeSlice";
 import {useDispatch} from 'react-redux';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 
@@ -72,9 +72,7 @@ export default function DataSelectDialog(props) {
         newChecked.push(value);
       } 
     }
-    
     setChecked(newChecked);
-    
   };
 
 
@@ -131,12 +129,13 @@ export default function DataSelectDialog(props) {
   }
 
   const addCorespondingDataset = ()=>{
-    
+  
+
     if(dataset.length == 0){
       dispatch(addDataset(checked[0]));
       return;
     }
-
+   
     if(dataset.length !=0 && dataset[0].dataset_name != checked[0].dataset_name)
     {
       dispatch(addDataset(checked[0]));
@@ -153,7 +152,16 @@ export default function DataSelectDialog(props) {
         } 
       }
       const newNode = {type:"Dataset"}
-      dispatch(addNode(newNode))
+      dispatch(addNode(newNode))  
+   } else if(checked.length == 0) {
+    dispatch(clearDataset({}))
+     const newNodeList = [];
+     for(let node of nodes){
+      if(node.nodeData.type !== "Dataset"){
+        newNodeList.push(node);
+      } 
+    }
+    dispatch(setNodes(newNodeList));
    }
    
   }

@@ -8,7 +8,11 @@ const initialState = {
     normalizationColumns:[],
     standardizationColumns:[],
     imputationAlgs:[],
-    edgeToDelete:""
+    edgeToDelete:"",
+    mappedNodes:[],
+    constant_value_imputation_columns:[],
+    constant_value_imputation_values:[],
+    edges:[]
 }
 
 export const nodeSlice = createSlice({
@@ -27,13 +31,35 @@ export const nodeSlice = createSlice({
                 state.nodes.push(newNode);
             }
             
-        } ,
+        },
+        setConstantValueImputationColumns:(state,action)=>{
+            state.constant_value_imputation_columns = action.payload
+        },
+        setStoredConstantValueImputationValues:(state,action)=>{
+            state.constant_value_imputation_values = action.payload
+        },
+        setMappedNodes:(state, action)=>{
+            state.mappedNodes = action.payload;
+        },
+        setMappedEdges:(state, action)=>{
+            state.edges = action.payload
+        },
         setNodes:(state, action)=>{
+            
             state.nodes = action.payload
         },
         removeNode:(state, action) =>{
             state.nodes = state.nodes.filter((node)=> node.id !== action.payload)
         }, 
+        removePreProcessingNodes:(state, action)=>{
+           
+        },
+        resetSelectedModelType:(state, action)=>{
+            state.selectedModelType = "";
+        },
+        clearDataset:(state,action)=>{
+            state.selectedDataset = [];
+        },
         addDataset:(state,action) =>{
             state.selectedDataset = [];
             state.selectedDataset = [action.payload]
@@ -60,17 +86,18 @@ export const nodeSlice = createSlice({
             state.imputationAlgs = action.payload;
         },
         setEdgeToDelete:(state,action)=>{
+            
             state.edgeToDelete = action.payload;
         },
         resetNormalizationAndStandardization:(state) =>{
             state.normalizationColumns = [];
             state.standardizationColumns = [];
         }
-        
+         
     }
 });
 
 
-export const {resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete} = nodeSlice.actions
+export const {setStoredConstantValueImputationValues, setConstantValueImputationColumns,setMappedNodes, setMappedEdges, resetSelectedModelType, resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete, clearDataset, removePreProcessingNodes} = nodeSlice.actions
 
 export default nodeSlice.reducer;

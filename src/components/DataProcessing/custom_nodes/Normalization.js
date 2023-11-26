@@ -21,6 +21,7 @@ import {resetNormalizationAndStandardization, setNodes} from "../../../reducers/
 export default memo(({ data, isConnectable }) => {
   
   const dispatch = useDispatch();
+  const dataset = useSelector((state)=>state.selectedDataset);
   const normalizationColumns = useSelector((state)=>state.normalizationColumns);
   const standardizationColumns = useSelector((state)=>state.standardizationColumns);
   const [allColumns, setAllColumns] = useState([]);
@@ -92,7 +93,22 @@ export default memo(({ data, isConnectable }) => {
     setTimeout(()=>{
       dispatch(resetNormalizationAndStandardization());
     },100)
+  }
 
+  const isDatasetSelected = ()=>{
+    if( !dataset || dataset.length == 0){
+      return false;
+    } else {
+      return true;
+    }
+  } 
+
+  const checkDatasetSelectedAndGo = ()=>{
+    if(isDatasetSelected() == true){
+      setNormalizationStandardizationOpen(true)
+    } else {
+      alert("There was no dataset selected!");
+    }
   }
 
   useEffect(()=>{
@@ -142,7 +158,7 @@ export default memo(({ data, isConnectable }) => {
             </TableContainer>
             <hr/>
             <div className='dataset-node-bottom-toolbox'>
-                <button className='dataset-toolbox-btn applied-alg'onClick={()=>{setNormalizationStandardizationOpen(true)}}> See all applied algorithms <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></button>
+                <button className='dataset-toolbox-btn applied-alg'onClick={()=>{checkDatasetSelectedAndGo()}}> See all applied algorithms <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></button>
             </div>
         </div>
         <div className='dataset-node-bottom'>

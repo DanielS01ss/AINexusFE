@@ -53,7 +53,9 @@ export default memo(({ data, isConnectable }) => {
   }
 
   useEffect(()=>{
-    fetchDatasetInfo(datasetSelected[0].id);
+    if(datasetSelected && datasetSelected.length!=0){
+      fetchDatasetInfo(datasetSelected[0].id);
+    }
   },[datasetSelected])
 
 
@@ -71,7 +73,7 @@ export default memo(({ data, isConnectable }) => {
             <h3> <FontAwesomeIcon icon={faCircleQuestion}/> Info</h3>
             <hr/>
             <div className='dataset-node-info-section-container'>
-                    <p><strong>Name:</strong><span>{datasetSelected[0].dataset_name}</span></p>
+                   {datasetSelected.length!==0 && <p><strong>Name:</strong><span>{datasetSelected[0].dataset_name}</span></p>} 
                     <p><strong>Publication Date:</strong><span>{publishDate}</span></p>
             </div>
             <hr/>

@@ -16,7 +16,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useDispatch } from 'react-redux';
 import { useSelector } from "react-redux/es/hooks/useSelector";
-import {resetNormalizationAndStandardization, setNodes} from "../../../reducers/nodeSlice";
+import {resetNormalizationAndStandardization, setNodes, resetSelectedModelType} from "../../../reducers/nodeSlice";
 
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
@@ -45,12 +45,12 @@ export default memo(({ data, isConnectable }) => {
     newNodeList = newNodeList.filter((node)=> node.nodeData.type!=="Model Training");
     dispatch(setNodes(newNodeList));
     setTimeout(()=>{
-      dispatch(resetNormalizationAndStandardization());
+      dispatch(resetSelectedModelType());
     },100)
 
   }
 
-
+ 
   return (
     <div style={{ width:"900px", borderRadius:"5%",padding:"10px",border:"3px solid #fff" }}>
         <Handle
@@ -65,7 +65,7 @@ export default memo(({ data, isConnectable }) => {
             <FontAwesomeIcon icon={faDiagramProject} /> Model training
         </div>
         <div className='dataset-node-separator'>
-        <p className='remove-node-btn-container' onClick={()=>{deleteNode()}}><span className='remove-node-btn'>x</span></p>
+        <p className='remove-node-btn-container' onClick={()=>{deleteNode()}} ><span className='remove-node-btn'>x</span></p>
         </div>
         <div className='dataset-node-info-section'>
             <h3>  </h3>

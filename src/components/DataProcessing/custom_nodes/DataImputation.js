@@ -16,15 +16,17 @@ import Paper from '@mui/material/Paper';
 import Imputation from '../dialogs/Imputation/Imputation';
 import { useDispatch } from 'react-redux';
 import {setNodes} from "../../../reducers/nodeSlice";
-
+import toast, { Toaster } from 'react-hot-toast';
 
 export default memo(({ data, isConnectable }) => {
 
+  const dataset = useSelector((state)=>state.selectedDataset);
   const dispatch = useDispatch();
   const allNodes = useSelector((state)=>state.nodes);
   const imputationAlgs = useSelector((state)=>{return state.imputationAlgs});
   const [rows, setRows] = useState([]);
   const [isImputationModalOpen, setIsImputationModalOpen] = useState(false);
+
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -44,12 +46,13 @@ export default memo(({ data, isConnectable }) => {
       border: 0,
     },
   }));
-
+ 
   const deleteNode = ()=>{
     let newNodeList = [...allNodes];
     newNodeList = newNodeList.filter((node)=> node.nodeData.type!=="Data Imputation");
     dispatch(setNodes(newNodeList));
   }
+  
  
 
   useEffect(()=>{
@@ -61,6 +64,22 @@ export default memo(({ data, isConnectable }) => {
       }])
     }
   },[imputationAlgs])
+ 
+  const isDatasetSelected = ()=>{
+    if( !dataset || dataset.length == 0){
+      return false;
+    } else {
+      return true;
+    }
+  } 
+
+  const checkDatasetSelectedAndGo = ()=>{
+    if(isDatasetSelected() == true){
+      setIsImputationModalOpen(true);
+    } else {
+      alert("There was no dataset selected!");
+    }
+  }
 
   return (
     <div style={{ width:"500px", borderRadius:"5%",padding:"10px",border:"1px solid #fc0324" }}>
@@ -69,7 +88,7 @@ export default memo(({ data, isConnectable }) => {
         position={Position.Left}
         id="a"
         style={{padding:"10px",border:"3px solid #fc0324"}}
-        isConnectable={isConnectable}
+        isConnectable={1}
       />
       <div>
         <p className='remove-node-btn-container' onClick={()=>{deleteNode()}}><span className='remove-node-btn'>x</span></p>
@@ -77,7 +96,6 @@ export default memo(({ data, isConnectable }) => {
             <FontAwesomeIcon icon={faDivide} /> Data imputation
         </div>
         <div className='dataset-node-separator'>
-
         </div>
         <div className='dataset-node-info-section'>
             <h3>  </h3>
@@ -102,7 +120,7 @@ export default memo(({ data, isConnectable }) => {
             </TableContainer>
             <hr/>
             <div className='dataset-node-bottom-toolbox'>
-                <button className='dataset-toolbox-btn imputation-algs' onClick={()=>{setIsImputationModalOpen(true);}}>Edit imputation algs <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></button>
+                <button className='dataset-toolbox-btn imputation-algs' onClick={()=>{checkDatasetSelectedAndGo()}}>Edit imputation algs <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></button>
             </div>
         </div> 
         <div className='dataset-node-bottom'>

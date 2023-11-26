@@ -18,11 +18,12 @@ import { Typography } from '@mui/material';
 import {useDispatch} from 'react-redux';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import AIModelDialogInfo from "../AIModelsDialogInfo/AIModelDialogInfo";
-import {addNode, setSelectedModelType} from "../../../../reducers/nodeSlice";
+import {addNode, setSelectedModelType, setNodes, resetSelectedModelType} from "../../../../reducers/nodeSlice";
 
 export default function AIModels (props) {
 
     const dispatch = useDispatch();
+    const allNodes = useSelector((state)=>state.nodes);
     const storedNodes = useSelector((state)=>state.nodes);
     const selectedModel = useSelector((state)=>state.selectedModelType)
     const [checked, setChecked] = React.useState([]);
@@ -35,6 +36,19 @@ export default function AIModels (props) {
       setDisplayMoreInfo(true);
     }
 
+    const deleteNode = ()=>{
+      let newNodeList = [...allNodes];
+      newNodeList = newNodeList.filter((node)=> node.nodeData.type!=="Model Training");
+      setTimeout(()=>{
+        dispatch(setNodes(newNodeList));
+      },200)
+      
+      setTimeout(()=>{
+        dispatch(resetSelectedModelType());
+      },100)
+  
+    }
+ 
     const handleDisplayAlgInfo = ()=>{
       setDisplayMoreInfo(false);
     }
@@ -47,6 +61,7 @@ export default function AIModels (props) {
       if(newChecked.length == 1){
         if(currentIndex != -1){
           newChecked.pop();
+         
         } else {
           newChecked.pop();
           newChecked.push(value);
@@ -77,6 +92,9 @@ export default function AIModels (props) {
               return;
             }
           }
+      } else {
+      
+        deleteNode();
       }
       const newNodePayload = {
         type:"Model Training"

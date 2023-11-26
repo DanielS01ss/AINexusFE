@@ -104,6 +104,21 @@
     justify-content: space-around;
   }
 
-  .play-btn{
-
+  .pipeline-started{
+    background-color:green;
   }
+
+  .play-btn:hover{
+    cursor: pointer;
+  }
+
+.alert-error{
+ background-color: rgb(153, 0, 0);
+ color:white;
+ width: 500px;
+ padding: 20px;
+ font-size: 1.3rem;
+ border-radius: 10px;
+ -webkit-box-shadow: 5px 5px 15px 5px #000000; 
+ box-shadow: 5px 5px 15px 5px #000000;
+}

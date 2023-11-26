@@ -8,6 +8,8 @@ import DataImputation from './custom_nodes/DataImputation';
 import ModelTraining from './custom_nodes/ModelTraining';
 import CustomEdge from "./custom_edges/CustomEdge.js";
 import {  useSelector } from "react-redux/es/hooks/useSelector";
+import {setMappedNodes, setMappedEdges} from "../../reducers/nodeSlice";
+import {useDispatch} from 'react-redux';
 
 function Flow() {
 
@@ -17,12 +19,12 @@ function Flow() {
   const storedDataset = useSelector((state)=>state.selectedDataset);
   const edgeToDelete = useSelector((state)=>state.edgeToDelete);
   const [placedNodes, setPlacedNodes] = useState([]);
-  const initialNodes = [];
+  const initialNodes = []; 
   const initialEdges = [];
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(initialEdges);
   const [variant, setVariant] = useState('cross');
-
+  const dispatch = useDispatch();
   
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -108,7 +110,7 @@ function Flow() {
       if(nodeType == "Dataset" && !containsNode(nodeType,nodes)){
       
         newNodes.push({
-          id: 'node-2',
+          id: 'node-1',
           type: 'dataSet',
           data: { label: 'Dataset' },
           position: { x: 150, y: 25 },
@@ -119,7 +121,7 @@ function Flow() {
         
         newNodes.push(
           {
-           id: 'node-1',
+           id: 'node-2',
            type: 'featureSelection',
            data: { label: 'Data featuring' },
            position: { x: 850, y: 5 },
@@ -175,18 +177,82 @@ function Flow() {
   }
 
   const deleteOneEdge = (edgeToDelete) =>{
+    
     setEdges((eds) => eds.filter((e) => e.id !== edgeToDelete));
   }
+
+  const verifyAddedEdgeIsOk = ()=>{
+    
+   if (edges.length == 0 ){
+    return;
+
+   } else {
+      const sourceEdges = [];
+      const targetEdges = [];
+      let lastEdgeSource = edges[edges.length-1].source;
+      let lastEdgeTarget = edges[edges.length-1].target; 
+      if (lastEdgeSource == lastEdgeTarget){
+        deleteOneEdge(edges[edges.length-1].id);
+        return;
+      }
+      for(const edg of edges){
+        sourceEdges.push(edg.source);
+        targetEdges.push(edg.target);
+      }
+  
+      sourceEdges.pop();
+      targetEdges.pop();
+      if(sourceEdges.indexOf(lastEdgeSource)!==-1 || targetEdges.indexOf(lastEdgeTarget)!==-1 ) {
+        deleteOneEdge(edges[edges.length-1].id);
+        return;
+      }
+   }
+   
+  }
+
+  const setTheNodes = ()=>{
+    const mappedNodeInfo = [];
+    for(const node of nodes){
+      const newNodeObj = {
+        id:node.id,
+        type:node.type
+      }
+      mappedNodeInfo.push(newNodeObj);
+    }
+    dispatch(setMappedNodes(mappedNodeInfo));
+  }
+
+  const setTheEdges = ()=>{
+    const mappedEdgeInfo = [];
+    for(const edge of edges){
+      const edgeInfo = {
+        source:edge.source,
+        target:edge.target
+      }
+      mappedEdgeInfo.push(edgeInfo);
+    }
+   dispatch(setMappedEdges(mappedEdgeInfo));
+   setTheNodes();
+  } 
+
+ 
 
   useEffect(()=>{
     processAndPlaceNodes(storedNodes);
   },[storedNodes])
 
   useEffect(()=>{  
+    
     deleteOneEdge(edgeToDelete);
   },[edgeToDelete])
 
+  useEffect(()=>{
+    verifyAddedEdgeIsOk();
 
+    setTheEdges();
+  },[edges])
+
+ 
     return (
       <div style={{ width: '96vw', height: '100vh' }}>
         <ReactFlow 
