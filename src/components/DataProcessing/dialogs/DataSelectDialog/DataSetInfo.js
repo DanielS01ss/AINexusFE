@@ -51,7 +51,7 @@ export default function DataSetInfo (props){
 
     const fetchDatasetInfo = (datasetId)=>{
       axios.get(DATASET_FETCH_DATASET_INFO(datasetId))
-      .then(resp => {  setFetchedDatasetInfo(resp.data)})
+      .then(resp => { setFetchedDatasetInfo(resp.data)})
       .catch(err => {console.log(err)})
     }
 

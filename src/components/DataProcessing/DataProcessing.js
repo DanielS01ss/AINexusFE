@@ -5,8 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCirclePlay, faCircleStop } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import LeftMenu from "./LeftMenu";
+import { START_PIPELINE } from "../../utils/apiEndpoints";
 import toast, { Toaster } from 'react-hot-toast';
-import { useDispatch } from "react-redux";
+import axios from "axios";
 
 function DataProcessing() {
   
@@ -60,6 +61,15 @@ function DataProcessing() {
      return null;
   }
 
+  const makeRequestForPipeline = (operationsList)=>{
+    const datasetSignature = selectedDataset[0].database_name;
+    const requestObject = {
+      dataset_name: "heart_failure",
+      operations:[...operationsList]
+    }
+      axios.post(START_PIPELINE,requestObject).then((resp)=>{console.log(resp.data)}).catch(err => console.log(err));
+  }
+
   const startPipelineAndMakeRequests = ()=>{
      
       const isDatasetBlock = pipelineNodes.find(nd => nd.id === "node-1");
@@ -89,7 +99,7 @@ function DataProcessing() {
       const operationsList = [];
       let operationObj;
       for(const operation of orderOfOperations){
-        if(operation == "node-2"){
+        if(operation == "node-2" && selectedDataFeaturingColumns.length!=0){
           operationObj = {
             operation_name:"Data featuring",
             columns:[...selectedDataFeaturingColumns]
@@ -130,6 +140,7 @@ function DataProcessing() {
           } 
         }
       }
+      makeRequestForPipeline(operationsList);
   }
 
     return (

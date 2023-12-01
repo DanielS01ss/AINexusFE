@@ -105,6 +105,7 @@ export default function DataSelectDialog(props) {
       setDataSets(fetchedData);
       setDatasetSearch(fetchedData);
       restoreChecksBasedOnStoredData(fetchedData);
+      console.log(resp.data);
     }).catch(err => {console.log(err)})
   }
   
@@ -166,13 +167,11 @@ export default function DataSelectDialog(props) {
    
   }
   
-
   React.useEffect(()=>{
     fetchAllData();
   },[])
 
  
-
   return (
     
   <div>
