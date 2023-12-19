@@ -27,6 +27,8 @@ function createData(name, calories, fat, carbs, protein) {
 export default memo(({ data, isConnectable }) => {
  
   const dispatch = useDispatch();
+  const [isTraining, setIsTraining] = React.useState(false);
+  const [isDone, setIsDone] = React.useState(false);
   const allNodes = useSelector((state)=>state.nodes);
   const rows = [
     createData('Training loss', 159),
@@ -52,7 +54,7 @@ export default memo(({ data, isConnectable }) => {
 
  
   return (
-    <div style={{ width:"900px", borderRadius:"5%",padding:"10px",border:"3px solid #fff" }}>
+    <div style={{ width:"600px", borderRadius:"5%",padding:"10px",border:"3px solid #fff" }}>
         <Handle
         type="target"
         position={Position.Left}
@@ -71,10 +73,12 @@ export default memo(({ data, isConnectable }) => {
             <h3>  </h3>
             <hr/>
               <div className='training-card-body'>
-                 <h1>Real Time Data</h1>
-                 <p className='elapsed-time'><FontAwesomeIcon icon={faStopwatch} /> <span className='elapsed-time-text'>Elapsed Time:</span></p>
-                 <TableContainer component={Paper} sx={{ maxWidth: 750,backgroundColor:"#121212" }} theme={darkTheme}>
-                  <Table sx={{ maxWidth: 750}} aria-label="simple table" >
+                {!isTraining && 
+                <>
+                  <h1>Real Time Data</h1>
+                 <p className='elapsed-time'><FontAwesomeIcon icon={faStopwatch} /> <span className='elapsed-time-text'>Elapsed Time:</span><span>0m</span><span>0s</span></p>
+                 <TableContainer component={Paper} sx={{ maxWidth: 550,backgroundColor:"#121212", padding:"10px" }} theme={darkTheme}>
+                  <Table sx={{ maxWidth: 550}} aria-label="simple table" >
                     <TableHead>
                       <TableRow>
                         <TableCell sx={{color:"#fff", fontSize:"1.4rem",fontWeight:"bold"}}>Parameter Name</TableCell>
@@ -96,17 +100,25 @@ export default memo(({ data, isConnectable }) => {
                     </TableBody>
                   </Table>
                </TableContainer>
+                </>
+                }
+               {isTraining &&    
                <div className='model-status-container'> 
-                <p>Model status:<span>Training..</span></p>
-                <div class="loading-spinner">
-                  <div class="dot1"></div>
-                  <div class="dot2"></div>
-                  <div class="dot3"></div>
-                </div>
-                  <div className='done-container'>
-                  ✨🎉🎉Done!! 🎉🎉✨
+                  <p>Model status:<span>Training..</span></p>
+                  <div class="loading-spinner">
+                    <div class="dot1"></div>
+                    <div class="dot2"></div>
+                    <div class="dot3"></div>
                   </div>
-               </div>
+                  
+                </div>
+             }
+             {
+              isDone && 
+              <div className='done-container'>
+                ✨🎉🎉Done!! 🎉🎉✨
+              </div>
+             }
               </div>
             <hr/>
             <div className='dataset-node-bottom-toolbox'>

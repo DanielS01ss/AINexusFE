@@ -23,6 +23,8 @@ import WidgetsIcon from '@mui/icons-material/Widgets';
 import DataSelectDialog from './dialogs/DataSelectDialog/DataSelectDialog';
 import PreProcessingAlgDialog from './dialogs/PreProcessingAlgDialog/PreProcessingAlgDialog';
 import AIModels from './dialogs/AIModels/AIModels';
+import toast, { Toaster } from 'react-hot-toast';
+import { useSelector } from "react-redux/es/hooks/useSelector";
 
 const drawerWidth = 240;
 
@@ -46,7 +48,7 @@ const closedMixin = (theme)=> ({
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
 });
-
+ 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -91,14 +93,23 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
   }),
 );
-
+ 
 export default function MiniDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [selectDataDialog, setSelectDataDialog] = React.useState(false);
   const [preProcessingAlgDialogOpen, setPreProcessingAlgDialogOpen] = React.useState(false);
   const [displayMLModels, setDisplayMLModels] = React.useState(false);
+  const [isDatasetSelected, setIsDatasetSelected] = React.useState(false);
+  const dataset = useSelector((state)=>state.selectedDataset);
 
+  const blockAlert = (msg)=>{
+    toast.error(msg,{
+      duration:2000,
+      position:'top-right',
+    })
+  }
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -122,6 +133,22 @@ export default function MiniDrawer() {
   const handleDisplayMLModels = () =>{
     setDisplayMLModels(false);
   }
+
+  const handleOpenMLModels = ()=>{
+    if(isDatasetSelected){
+      setDisplayMLModels(true);
+    } else {
+      blockAlert("Please select a dataset first!")
+    }
+  }
+
+  React.useEffect(()=>{
+    if(dataset.length != 0){
+      setIsDatasetSelected(true);
+    } else {
+      setIsDatasetSelected(false);
+    }
+  },[dataset])
 
   return (
     <Box sx={{ display: 'flex' , width:"20px !important"}}>
@@ -207,7 +234,7 @@ export default function MiniDrawer() {
                   <ListItemText primary={"Data pre-processing"} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
             </ListItem>
-            <ListItem key={"AI Models"} disablePadding sx={{ display: 'block' }} onClick={()=>{setDisplayMLModels(true);}}>
+            <ListItem key={"AI Models"} disablePadding sx={{ display: 'block' }} onClick={()=>{handleOpenMLModels()}}>
               <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -258,6 +285,7 @@ export default function MiniDrawer() {
             </ListItem>
         </List>
       </Drawer>
+      <Toaster/>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
       </Box>
      {selectDataDialog && <DataSelectDialog  open={selectDataDialog} handleClose={handleDataSelectDialogClose} />}

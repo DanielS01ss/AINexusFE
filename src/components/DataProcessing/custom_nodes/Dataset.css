@@ -88,12 +88,13 @@
 }
 
 .model-training-card-header{
-    width: 880px;
+    width: 575px;
 }
 
 .training-card-body{
-    width: 750px;
+    width: 550px;
     margin: auto;
+    padding: 10px;
 }
 
 .model-status-container{

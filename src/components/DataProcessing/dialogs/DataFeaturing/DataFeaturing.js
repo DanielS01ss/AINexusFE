@@ -5,8 +5,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import DataSetInfo from '../DataSelectDialog/DataSetInfo';
 import {setSelectedDataFeaturingColumns} from "../../../../reducers/nodeSlice";
 import {useDispatch} from 'react-redux';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -126,7 +124,6 @@ export default function DataFeaturing(props){
     <div>
         <ThemeProvider theme={darkTheme}>
           <Dialog open={props.open} onClose={props.handleClose} sx={{textAlign:"center", backgroundColor:""}} maxWidth="300" fullWidth="true" >
-    
                <DialogTitle> Select columns to remove </DialogTitle>
                 <DialogContent sx={{textAlign:'center'}}>   
                 <Box sx={{ height: 400, width: '90%', margin:"auto",borderRadius:"5px" }}  bgcolor="black" >

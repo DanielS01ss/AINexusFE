@@ -12,7 +12,8 @@ const initialState = {
     mappedNodes:[],
     constant_value_imputation_columns:[],
     constant_value_imputation_values:[],
-    edges:[]
+    edges:[],
+    ml_algorithm_target:{}
 }
 
 export const nodeSlice = createSlice({
@@ -31,6 +32,9 @@ export const nodeSlice = createSlice({
                 state.nodes.push(newNode);
             }
             
+        },
+        setMLAlgorithmTarget:(state, action)=>{
+            state.ml_algorithm_target = action.payload;
         },
         setConstantValueImputationColumns:(state,action)=>{
             state.constant_value_imputation_columns = action.payload
@@ -98,6 +102,6 @@ export const nodeSlice = createSlice({
 });
 
 
-export const {setStoredConstantValueImputationValues, setConstantValueImputationColumns,setMappedNodes, setMappedEdges, resetSelectedModelType, resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete, clearDataset, removePreProcessingNodes} = nodeSlice.actions
+export const {setMLAlgorithmTarget,setStoredConstantValueImputationValues, setConstantValueImputationColumns,setMappedNodes, setMappedEdges, resetSelectedModelType, resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete, clearDataset, removePreProcessingNodes} = nodeSlice.actions
 
 export default nodeSlice.reducer;
