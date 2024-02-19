@@ -45,6 +45,7 @@ function Flow() {
     width: '100%',
     height: 300,
   };
+  
 
   const nodeColor = (node) => {
     switch (node.type) {

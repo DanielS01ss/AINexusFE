@@ -14,6 +14,12 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { AUTHENTICATION_LOGIN } from '../../utils/apiEndpoints';
+import { saveToken, saveRefreshToken } from '../../utils/saveTokens';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
+import { useNavigate } from 'react-router-dom';
+
 
 function Copyright(props) {
   return (
@@ -44,14 +50,62 @@ export default function SignIn() {
   const [firstTryEmail, setFirstTryEmail] = useState(true);
   const [firstTryPassword, setFirstTryPassword] = useState(true);
   const [unsuccessfulSubmit, setUnsuccessfulSubmit] = useState(false);
+  const [alertErrorMessage, setAlertErrorMessage] = useState("");
+  const [alertSuccessMessage, setAlertSuccessMessage] = useState("Success! Redirecting...");
+  const [alertError, setAlertError] = useState(false);
+  const [alertSuccess, setAlertSuccess] = useState(false);
+
+  const navigate = useNavigate();
+  const handleClick = () => {
+        navigate('/pipelines');
+  };
+
+  const toggleAlert = (alert_type)=>{
+    if(alert_type == "error"){
+      setAlertError(true);
+      setTimeout(()=>{
+        setAlertError(false);
+      },3000)
+    } else if(alert_type == "success"){
+      setAlertSuccess(true);
+      setTimeout(()=>{
+        setAlertSuccess(false);
+      },3000)
+    }
+  }
+
+  const authenticationRequest = async(auth_obj)=>{
+    let response;
+    try{
+       response = await axios.post(AUTHENTICATION_LOGIN,auth_obj);
+      saveToken(response.data.token);
+      saveRefreshToken(response.data.refreshToken);
+      toggleAlert("success");
+      setTimeout(()=>{
+        handleClick();
+      },2000)
+    } catch(err){
+      console.log(err);
+      if(err && err.response && err.response.status == 403){
+        setUnsuccessfulSubmit(true);
+        setIsEmailValid(false);
+        setIsPasswordValid(false);
+        setAlertErrorMessage("Wrong credentials")
+        setTimeout(()=>{
+          toggleAlert("error");
+        },500)
+      }
+    }
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    authenticationRequest({
       email: data.get('email'),
       password: data.get('password'),
     });
+
   };
 
   const validateEmail = (email) => {
@@ -61,6 +115,7 @@ export default function SignIn() {
 
   const handleEmailChange = (evt)=>{
     setFirstTryEmail(false);
+    setUnsuccessfulSubmit(false);
     const emailValidity = validateEmail(evt.target.value);
     if(!emailValidity){
       setEmailErrorMsg("The email is not valid!");
@@ -70,6 +125,7 @@ export default function SignIn() {
 
   const handlePasswordChange = (evt) =>{
     setFirstTryPassword(false);
+    setUnsuccessfulSubmit(false);
     if(evt.target.value.length !=0){
       setIsPasswordValid(true);
       setPasswordError(false);
@@ -127,7 +183,7 @@ export default function SignIn() {
               onChange={(evt)=>{handleEmailChange(evt)}}
               autoFocus
             />
-            {!firstTryEmail && emailError && ( 
+            {!firstTryEmail && !isEmailValid && ( 
               <div style={{ color: 'red', fontSize: '16px', marginTop: '5px' }}>
                   {emailErrorMsg}
                </div>
@@ -153,6 +209,18 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+            {alertError &&
+               <Alert variant="filled" severity="error" style={{ position: 'absolute', top: 10, right: 10, width:"300px", fontSize:"1.1rem" }}>
+               Wrong credentials!
+               </Alert>
+            }
+            {
+                alertSuccess &&
+                <Alert variant="filled" severity="success" style={{ position: 'absolute', top: 10, right: 10, width:"400px", fontSize:"1.1rem" }}>
+                  {alertSuccessMessage}
+              </Alert>
+            }
+            
             <Button
               type="submit"
               fullWidth

@@ -5,10 +5,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCirclePlay, faCircleStop } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import LeftMenu from "./LeftMenu";
+import { Dropdown } from '@mui/base/Dropdown';
+import { Menu } from '@mui/base/Menu';
+import { MenuButton as BaseMenuButton } from '@mui/base/MenuButton';
+import { MenuItem as BaseMenuItem, menuItemClasses } from '@mui/base/MenuItem';
+import PropTypes from 'prop-types';
+import { styled } from '@mui/material/styles';
+
+
 import toast, { Toaster } from 'react-hot-toast';
 
+
+
+
 function DataProcessing() {
-  
+
   const nodes = useSelector((state)=> state.nodes);
   const constant_value_imputation_columns = useSelector((state)=>state.constant_value_imputation_columns);
   const constant_value_imputation_values = useSelector((state)=>state.constant_value_imputation_values);
@@ -25,7 +36,10 @@ function DataProcessing() {
   const [isPipelineStarted, setIsPipelineStarted] = useState(false);
   const [displayPipelineSteps, setDisplayPipelineSteps] = useState(false);
   const [pipelineBubbles, setPipelineBubbles] = useState([]);
+  const [areNodesSelected , setAreNodesSelected] = useState(false);
   const socket = new WebSocket("ws://localhost:8081/ws");
+
+
   let pipelineSteps = 0;
 
 
@@ -264,9 +278,12 @@ function DataProcessing() {
     
     if(nodes.length > 0){
       setDisplayPipelineSteps(true);
+      setAreNodesSelected(true);
     } else {
       setDisplayPipelineSteps(false);
+      setAreNodesSelected(false);
     }   
+
   },[nodes])
 
   useEffect(()=>{
@@ -282,27 +299,31 @@ function DataProcessing() {
     return (
       <div style={{ height: '100%' }}>        
         <div className="flow-container">
-            <div class="container">
-              {isPipelineStarted ? <div className="pipeline-controller pipeline-started">
-                <p className="play-btn" onClick={()=>{setIsPipelineStarted(false)}}><FontAwesomeIcon icon={faCircleStop} /></p>
-                <p>Running...</p>
-              </div>
-               : 
-            <div className="pipeline-controller">
-               <p className="play-btn" onClick={()=>{startPipelineAndMakeRequests()}}><FontAwesomeIcon icon={faCirclePlay} /></p>
-               <p>Start Pipeline</p>
-             </div>
-             }     
-             {
-              displayPipelineSteps &&
-              <div className="steps">
+          {
+                areNodesSelected &&
+                <div class="container">
+                {isPipelineStarted ? <div className="pipeline-controller pipeline-started">
+                  <p className="play-btn" onClick={()=>{setIsPipelineStarted(false)}}><FontAwesomeIcon icon={faCircleStop} /></p>
+                  <p>Running...</p>
+                </div>
+                 : 
+              <div className="pipeline-controller">
+                 <p className="play-btn" onClick={()=>{startPipelineAndMakeRequests()}}><FontAwesomeIcon icon={faCirclePlay} /></p>
+                 <p>Start Pipeline</p>
+               </div>
+               }     
+               {
+                displayPipelineSteps &&
+                <div className="steps">
                   {pipelineBubbles}
                 <div className="progress-bar">
                  <span className="indicator" style={{width:"10%",marginLeft:"-200px"}}></span>
                  </div>
+                </div>
+               }
               </div>
-             }
-            </div>
+         }
+           
             <Toaster/>
              <LeftMenu/>
              <Flow/> 

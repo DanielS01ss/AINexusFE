@@ -1,4 +1,5 @@
-import * as React from 'react';
+import * as React  from 'react';
+import { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,6 +13,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { AUTHENTICATION_REGISTER } from '../../utils/apiEndpoints';
+import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -25,20 +29,91 @@ function Copyright(props) {
     </Typography>
   );
 }
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
+ 
+ 
 const defaultTheme = createTheme();
 
 export default function SignUp() {
+
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [isEmailFirstTry, setIsEmailFirstTry] = useState(true);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [doPasswordsMatch, setDoPasswordsMatch] = useState(false);
+  const [isPasswordFirstTry, setIsPasswordFirstTry] = useState(true);
+  const [emailErrorMsg, setEmailErrorMsg] = useState(false);
+  const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const navigate = useNavigate();
+  const handleClick = () => {
+        navigate('/login');
+  };
+
+  const registerRequest = async(auth_obj)=>{
+    let response;
+    try{
+       response = await axios.post(AUTHENTICATION_REGISTER,auth_obj);
+        handleClick();
+    } catch(err){
+      console.log(err);
+      if(err && err.response && err.response.status == 403){
+        setIsEmailValid(false);
+        setIsPasswordValid(false);
+      }
+    }
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const registerObj = {
       email: data.get('email'),
       password: data.get('password'),
-    });
+    };
+
+    registerRequest(registerObj);
   };
+
+  
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const handleEmailChange = (evt)=>{
+    setIsEmailFirstTry(false);
+    const emailValidity = validateEmail(evt.target.value);
+    if(!emailValidity){
+      setEmailErrorMsg("The email is not valid!");
+    } 
+    setIsEmailValid(validateEmail(evt.target.value));
+  }
+
+  const passwordChange  = (evt)=>{
+    setPassword(evt.target.value);
+  }
+
+  const repeatPasswordChange = (evt)=>{
+    setIsPasswordFirstTry(false);
+    setRepeatPassword(evt.target.value);
+  }
+
+  useEffect(()=>{
+    if(password === repeatPassword && password!== ""){
+      setDoPasswordsMatch(true);
+    } else {
+      setDoPasswordsMatch(false);
+    }
+  },[password, repeatPassword])
+
+ useEffect(()=>{
+    if((doPasswordsMatch == isEmailValid) && !isEmailFirstTry && !isPasswordFirstTry ){
+      setIsFormValid(true);
+    } else {
+      setIsFormValid(false);
+    }
+ },[doPasswordsMatch, isEmailValid])
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -69,7 +144,14 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={!isEmailFirstTry && !isEmailValid}
+                  onChange={(evt)=>{handleEmailChange(evt)}}
                 />
+             { !isEmailValid && ( 
+              <div style={{ color: 'red', fontSize: '16px', marginTop: '5px' }}>
+                  {emailErrorMsg}
+               </div>
+              )}
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -80,6 +162,7 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  onChange={(evt)=>{passwordChange(evt)}}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -90,16 +173,22 @@ export default function SignUp() {
                   label="Repeat password"
                   type="password"
                   id="repeat-password"
-                  autoComplete="new-password"
+                  autoComplete="repeat-password"
+                  onChange={(evt)=>{repeatPasswordChange(evt)}}
                 />
               </Grid>
-              
+              { !isPasswordFirstTry && !doPasswordsMatch && ( 
+              <div style={{ color: 'red',marginLeft:"120px", fontSize: '16px', marginTop: '5px' }}>
+                  Passwords don't match
+               </div>
+              )}
             </Grid>
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={!isFormValid}
             >
               Sign Up
             </Button>

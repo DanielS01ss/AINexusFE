@@ -4,7 +4,7 @@
   background-repeat: no-repeat; 
   background-position: center; 
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 
@@ -19,7 +19,7 @@
 
 .lading-page-main-text-container{
   float:left;
-  margin-top:180px;
+  margin-top:100px;
   color:#fff;
   text-align: left;
   font-size: 1.9rem;
@@ -41,7 +41,7 @@
   font-size: 1.4rem;
   color:#fff;
   border:none;
-  margin-top:30px;
+  margin-top:10px;
 }
 
 .landing-page-button:hover{
@@ -49,11 +49,11 @@
 }
 
 .landing-page-card{
-  width: 300px;
+   width: 300px;
   padding:10px;
   height: 360px;
   background-color: #fff;
-  border-radius: 10px; 
+  border-radius: 10px;  
 }
 
 .landing-page-card-title{
@@ -63,13 +63,15 @@
 }
 
 .landing-page-cards-container{
-  width: 90%;
-  position: absolute;
-  top:55%;
+  /* width: 90vw;
+  position: relative;
+  */
+  width: 100%;
+  margin-top:27%;
   left:60px;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-around; 
   
 }
 

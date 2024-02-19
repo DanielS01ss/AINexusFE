@@ -13,7 +13,7 @@ export const LandingPage = ()=>{
     const handleClick = () => {
         navigate('/login');
       };
-    
+     
 
     return(
     <div className="landing-page-container">
@@ -35,9 +35,9 @@ export const LandingPage = ()=>{
                         <button onClick={()=>{handleClick()}} className="landing-page-button">Try it out!</button>
                     </div>
                 </div>
-                <div className="landing-page-cards-container">
-                    <div className="landing-page-card">
-                        <div className="landing-page-card-title">
+                 <div className="landing-page-cards-container">
+                   <div className="landing-page-card">
+                         <div className="landing-page-card-title">
                             Custom pipelines
                         </div>
                         <Divider/>
@@ -78,8 +78,10 @@ export const LandingPage = ()=>{
                             We offer explainability so you can interpret the results
                         </div>
                         <Divider/>
+                        
                     </div>
-                </div>
+                    
+                </div> 
             </div>
     </div>
     );

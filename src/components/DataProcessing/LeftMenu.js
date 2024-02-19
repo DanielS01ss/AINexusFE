@@ -22,6 +22,7 @@ import PsychologyIcon from '@mui/icons-material/Psychology';
 import WidgetsIcon from '@mui/icons-material/Widgets';
 import DataSelectDialog from './dialogs/DataSelectDialog/DataSelectDialog';
 import PreProcessingAlgDialog from './dialogs/PreProcessingAlgDialog/PreProcessingAlgDialog';
+import LogoutIcon from '@mui/icons-material/Logout';
 import AIModels from './dialogs/AIModels/AIModels';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSelector } from "react-redux/es/hooks/useSelector";
@@ -170,7 +171,13 @@ export default function MiniDrawer() {
           <Typography variant="h6" noWrap component="div">
           AI Nexus
           </Typography>
+        
+          <div style={{ flex: 1 }} />
+            <IconButton color="inherit" aria-label="logout">
+              <LogoutIcon />
+             </IconButton>
         </Toolbar>
+        
       </AppBar>
       <Drawer variant="permanent" open={open} PaperProps={{
         sx: {
