@@ -4,7 +4,7 @@ import styles from "./Dataset.css";
 import { styled } from '@mui/material/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
-import { faSquareRootVariable } from '@fortawesome/free-solid-svg-icons';
+import { faSquareRootVariable, faReceipt, faBorderTopLeft } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -135,27 +135,36 @@ export default memo(({ data, isConnectable }) => {
         <div className='dataset-node-info-section'>
             <h3> Selected Rows</h3>
             <hr/>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 200 }} aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell>Column Name</StyledTableCell>
-                    <StyledTableCell align="right">Algorithm applied</StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {allColumns.map((row,index) => (
-                    <StyledTableRow key={index}>
-                      <StyledTableCell component="th" scope="row">
-                        {row.name}
-                      </StyledTableCell>
-                      <StyledTableCell align="right">{row.algType}</StyledTableCell>
+          {allColumns.length !=0 && 
+             <TableContainer component={Paper}>
+             <Table sx={{ minWidth: 200 }} aria-label="customized table">
+               <TableHead>
+                 <TableRow>
+                   <StyledTableCell>Column Name</StyledTableCell>
+                   <StyledTableCell align="right">Algorithm applied</StyledTableCell>
+                 </TableRow>
+               </TableHead>
+               <TableBody>
+                 {allColumns.map((row,index) => (
+                   <StyledTableRow key={index}>
+                     <StyledTableCell component="th" scope="row">
+                       {row.name}
+                     </StyledTableCell>
+                     <StyledTableCell align="right">{row.algType}</StyledTableCell>
                 
-                    </StyledTableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                   </StyledTableRow>
+                 ))}
+               </TableBody>
+             </Table>
+           </TableContainer>
+          }
+           
+          {
+            allColumns.length == 0 && 
+            <div className="no-data-container">
+                <FontAwesomeIcon icon={faBorderTopLeft}/>
+            </div>
+          }
             <hr/>
             <div className='dataset-node-bottom-toolbox'>
                 <button className='dataset-toolbox-btn applied-alg'onClick={()=>{checkDatasetSelectedAndGo()}}> See all applied algorithms <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></button>

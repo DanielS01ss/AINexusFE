@@ -4,7 +4,7 @@ import styles from "./Dataset.css";
 import { styled } from '@mui/material/styles';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpRightFromSquare, faBorderNone } from '@fortawesome/free-solid-svg-icons';
 import { faDivide } from '@fortawesome/free-solid-svg-icons';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -98,13 +98,14 @@ export default memo(({ data, isConnectable }) => {
         <div className='dataset-node-separator'>
         </div>
         <div className='dataset-node-info-section'>
-            <h3>  </h3>
+            <h3> Imputation Algorithms  </h3>
             <hr/>
+            {rows.length != 0 &&
             <TableContainer component={Paper}>
               <Table sx={{ minWidth: 200 }} aria-label="customized table">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCell>Column Name</StyledTableCell>
+                    <StyledTableCell>Imputation Algorithms</StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -117,7 +118,15 @@ export default memo(({ data, isConnectable }) => {
                   ))}
                 </TableBody>
               </Table>
-            </TableContainer>
+            </TableContainer>  
+          }
+
+          {rows.length == 0 && 
+          <div className="no-data-container">
+              <FontAwesomeIcon icon={faBorderNone}/>
+          </div>
+          }
+            
             <hr/>
             <div className='dataset-node-bottom-toolbox'>
                 <button className='dataset-toolbox-btn imputation-algs' onClick={()=>{checkDatasetSelectedAndGo()}}>Edit imputation algs <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></button>

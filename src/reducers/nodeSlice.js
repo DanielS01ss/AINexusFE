@@ -49,7 +49,6 @@ export const nodeSlice = createSlice({
             state.edges = action.payload
         },
         setNodes:(state, action)=>{
-            
             state.nodes = action.payload
         },
         removeNode:(state, action) =>{

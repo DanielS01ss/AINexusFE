@@ -26,6 +26,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import AIModels from './dialogs/AIModels/AIModels';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSelector } from "react-redux/es/hooks/useSelector";
+import AreYouSure from './dialogs/AreYouSure/AreYouSure';
+import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -102,6 +104,7 @@ export default function MiniDrawer() {
   const [preProcessingAlgDialogOpen, setPreProcessingAlgDialogOpen] = React.useState(false);
   const [displayMLModels, setDisplayMLModels] = React.useState(false);
   const [isDatasetSelected, setIsDatasetSelected] = React.useState(false);
+  const [areYouSureOpen, setAreYouSureOpen] = React.useState(false);
   const dataset = useSelector((state)=>state.selectedDataset);
 
   const blockAlert = (msg)=>{
@@ -110,6 +113,9 @@ export default function MiniDrawer() {
       position:'top-right',
     })
   }
+
+  const navigate = useNavigate();
+  
   
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -143,6 +149,16 @@ export default function MiniDrawer() {
     }
   }
 
+  const handleCloseAreYouSure = ()=>{
+    setAreYouSureOpen(false);
+  }
+
+  const handleLogout = ()=>{
+    localStorage.clear();
+    navigate("/");
+    
+  }
+
   React.useEffect(()=>{
     if(dataset.length != 0){
       setIsDatasetSelected(true);
@@ -173,7 +189,7 @@ export default function MiniDrawer() {
           </Typography>
         
           <div style={{ flex: 1 }} />
-            <IconButton color="inherit" aria-label="logout">
+            <IconButton color="inherit" onClick={()=>{setAreYouSureOpen(true); }} aria-label="logout">
               <LogoutIcon />
              </IconButton>
         </Toolbar>
@@ -298,6 +314,7 @@ export default function MiniDrawer() {
      {selectDataDialog && <DataSelectDialog  open={selectDataDialog} handleClose={handleDataSelectDialogClose} />}
      {preProcessingAlgDialogOpen && <PreProcessingAlgDialog open={preProcessingAlgDialogOpen} handleClose={handlePreprocessingAlgDialogClose} />}
      {displayMLModels && <AIModels open={displayMLModels} handleClose={handleDisplayMLModels} />}
+     {areYouSureOpen && <AreYouSure noAction={()=>{}}  yesAction={()=>{handleLogout()}} alertDialogTitle={"Logout"} open={areYouSureOpen}  dialogMessage={"Do you want to sign out?"} handleClose={handleCloseAreYouSure}/>}
     </Box>
   );
 }

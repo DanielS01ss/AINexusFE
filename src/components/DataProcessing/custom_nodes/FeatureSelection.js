@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
-import { faTable } from '@fortawesome/free-solid-svg-icons';
+import { faTable, faReceipt } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -111,27 +111,35 @@ export default memo(({ data, isConnectable }) => {
         <div className='dataset-node-info-section'>
             <h3> <FontAwesomeIcon icon={faTable}/> Selected Rows</h3>
             <hr/>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 200 }} aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell>Column Name</StyledTableCell>
-                    <StyledTableCell align="right">Sample Data</StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row,index) => (
-                    <StyledTableRow key={index}>
-                      <StyledTableCell component="th" scope="row">
-                        {row.column_name}
-                      </StyledTableCell>
-                      <StyledTableCell align="right">{row.sample_data}</StyledTableCell>
-                
-                    </StyledTableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            {rows.length != 0 && 
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 200 }} aria-label="customized table">
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell>Column Name</StyledTableCell>
+                      <StyledTableCell align="right">Sample Data</StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {  rows.map((row,index) => (
+                      <StyledTableRow key={index}>
+                        <StyledTableCell component="th" scope="row">
+                          {row.column_name}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">{row.sample_data}</StyledTableCell>
+                  
+                      </StyledTableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            }
+            {
+              rows.length == 0 && 
+              <div className="no-data-container">
+                  <FontAwesomeIcon icon={faReceipt}/>
+              </div>
+            }
             <hr/>
             <div className='dataset-node-bottom-toolbox'>
                 <button className='dataset-toolbox-btn' onClick={()=>{checkDatasetSelectedAndGo()}}>See all selected rows <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></button>

@@ -42,7 +42,7 @@ export default function DataSelectDialog(props) {
   const [selectedDatasetName, setSelectedDatasetName] = React.useState("");
   const [filteredDatasets,setFilteredDatasets] = React.useState([]);
   const [searchedString, setSearchedString] = React.useState("");
-  
+  const [isDataLoading, setIsDataLoading] = React.useState(true);
 
   const handleDisplayDataSetInfo = (datasetId) =>{
     if(datasetId){
@@ -105,7 +105,8 @@ export default function DataSelectDialog(props) {
       setDataSets(fetchedData);
       setDatasetSearch(fetchedData);
       restoreChecksBasedOnStoredData(fetchedData);
-    }).catch(err => {console.log(err)})
+      setIsDataLoading(false);
+    }).catch(err => {console.log(err); setIsDataLoading(false)})
   }
   
 
@@ -203,7 +204,7 @@ export default function DataSelectDialog(props) {
                 </Paper>
               
               } 
-              {
+              { !isDataLoading &&
                 dataSetSearch &&
                    <List dense sx={{ width: '100%', bgcolor: 'background.paper', marginTop:"10px" }}>
                      <ListItem
@@ -223,10 +224,12 @@ export default function DataSelectDialog(props) {
                         <ListItemButton>
                           
                           <ListItemText  id={'fd3432'}  disableTypography
-                          primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>DataSet Name</Typography>} />
+                          primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>Dataset Name</Typography>} />
                         </ListItemButton>
                       </ListItem>
-                   {filteredDatasets.map((value,index) => {
+                  
+
+                   { filteredDatasets.map((value,index) => {
                      const labelId = `checkbox-list-secondary-label-${value}`;
                       return (
                         <ListItem
@@ -262,6 +265,12 @@ export default function DataSelectDialog(props) {
               {
                 !dataSetSearch &&
                 <DataSetInfo handleDisplayDataSetInfo={handleDisplayDataSetInfo} selectedDatasetId={selectedDatasetId} selectedDatasetName={selectedDatasetName}/>
+              }
+
+              {isDataLoading && 
+               <div class="spinner-container">
+                  <div class="spinner"></div>
+              </div>
               }
 
             </DialogContent>

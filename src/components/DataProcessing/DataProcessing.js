@@ -2,19 +2,25 @@ import React, { useEffect, useState } from "react";
 import Flow from "./Flow";
 import styles from './DataProcessing.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCirclePlay, faCircleStop } from '@fortawesome/free-solid-svg-icons';
+import { faCirclePlay, faCircleStop, faScroll, faToolbox } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import LeftMenu from "./LeftMenu";
-import { Dropdown } from '@mui/base/Dropdown';
-import { Menu } from '@mui/base/Menu';
-import { MenuButton as BaseMenuButton } from '@mui/base/MenuButton';
-import { MenuItem as BaseMenuItem, menuItemClasses } from '@mui/base/MenuItem';
-import PropTypes from 'prop-types';
+import Box from '@mui/material/Box';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { faCircleInfo, faTrashCan, faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { styled } from '@mui/material/styles';
-
-
+import { START_PIPELINE } from "../../utils/apiEndpoints";
+import { setNodes,clearDataset, resetSelectedModelType, removeDataFeaturingColumns, setNormalizationColumns, setStandardizationColumns, setImputationAlgs,setConstantValueImputationColumns, setStoredConstantValueImputationValues, setMappedEdges,setMLAlgorithmTarget, setEdgeToDelete, setMappedNodes } from "../../reducers/nodeSlice";
 import toast, { Toaster } from 'react-hot-toast';
-
+import { useDispatch } from 'react-redux';
+import {getToken} from "../../utils/getTokens";
+import axios from "axios";
+import AreYouSure from "./dialogs/AreYouSure/AreYouSure";
 
 
 
@@ -31,38 +37,28 @@ function DataProcessing() {
   const standardizationColumns = useSelector((state)=> state.standardizationColumns);
   const imputationAlgs = useSelector((state)=> state.imputationAlgs);
   const storedMLAlgorithmTarget = useSelector((state)=>state.ml_algorithm_target);
-  const circles = document.querySelectorAll(".circle"),
-  progressBar = document.querySelector(".indicator");
   const [isPipelineStarted, setIsPipelineStarted] = useState(false);
   const [displayPipelineSteps, setDisplayPipelineSteps] = useState(false);
-  const [pipelineBubbles, setPipelineBubbles] = useState([]);
   const [areNodesSelected , setAreNodesSelected] = useState(false);
-  const socket = new WebSocket("ws://localhost:8081/ws");
+  const [pipelineFailed, setPipelineFailed] = useState(false);
+  const [areYouSureOpen, setAreYouSureOpen] = useState(false);
+  const [pipelineMeetRequirements, setPipelineMeetRequirements] = useState(true);
+  const steps = ['Start', 'Pipeline steps', 'Finish'];
+  const [activeSteps, setActiveSteps] = useState([]);
+  const dispatch = useDispatch();
 
-
-  let pipelineSteps = 0;
-
-
-  let currentStep = 1;
-  const resetSteps = () => {
-    circles.forEach((circle)=>{
-      circle.classList.remove("active");
-    })
-    progressBar.style.width = "0%";
-    currentStep = 0;
-  }
-
-  const colorCircleForNextStep = ()=>{
-    circles.forEach((circle, index) => {
-      circle.classList[`${index < currentStep ? "add" : "remove"}`]("active");
-    });
-  }
-
-  const updateSteps = () => {
-    currentStep++;
-    progressBar.style.width = `${((currentStep - 1) / (circles.length - 1)) * 100}%`;
+  const isStepFailed = (step) => {
+    if(pipelineFailed){
+      return step === 1;
+    } else if( step === 2 && !pipelineMeetRequirements){
+      return true;
+    } else {
+      return false;
+    }
+    
   };
-
+  
+ 
   const blockAlert = (msg)=>{
     toast.error(msg,{
       duration:2000,
@@ -85,28 +81,41 @@ function DataProcessing() {
      return null;
   }
 
-  const makeRequestForPipeline = (operationsList)=>{
+  const parsePipelineResponse = (pipelineStepsStatus)=>{
+    pipelineStepsStatus = JSON.parse(pipelineStepsStatus);
+    
+    if(pipelineStepsStatus["pipeline_succes"] == false){
+       setPipelineFailed(true);
+    } else {
+      setActiveSteps([0,1,2])
+    }
+  }
+
+  const makeRequestForPipeline = async(operationsList)=>{
     const datasetSignature = selectedDataset[0].database_name;
     const requestObject = {
       dataset_name: datasetSignature,
       operations:[...operationsList]
     }
+
+    const token = getToken();
+
+    try{
+      const resp = await axios.post(START_PIPELINE, requestObject,{
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":`Bearer ${token}`
+        }
+      });
       
-    if (socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(requestObject));
-    } else{
-      blockAlert("There was a problem when connecting to the server! Please try again later")
+      parsePipelineResponse(resp.data);
+      setIsPipelineStarted(false);
+    } catch(err){
+      console.log(err);
+      setIsPipelineStarted(false);
     }
-
   }
 
-  const populatePipelineBubbles = (nr)=>{
-    const arr = [];
-    for(let i=0; i<nr; i++){
-      arr.push(<span className="circle" key={i}>{i+1}</span>);
-    }
-    setPipelineBubbles(arr);
-  }
 
   const getColumnsNameAsArray = (allColumns)=>{
     const columns = [];
@@ -119,8 +128,22 @@ function DataProcessing() {
     return columns;
   }
 
+  const HtmlTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({  
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: '#f5f5f9',
+      color: 'rgba(0, 0, 0, 0.87)',
+      maxWidth: 420,
+      fontSize: theme.typography.pxToRem(15),
+      border: '1px solid #dadde9',
+    },
+  }));
+
   const startPipelineAndMakeRequests = ()=>{
-      resetSteps();
+      
+    setPipelineFailed(false);
+
       const isDatasetBlock = pipelineNodes.find(nd => nd.id === "node-1");
       if(!isDatasetBlock){
         blockAlert("The pipeline does not meet the requirements!");
@@ -147,8 +170,6 @@ function DataProcessing() {
 
       const operationsList = [];
       let operationObj;
-      pipelineSteps = orderOfOperations.length;
-      handlePipelineSteps(1,true);
       for(const operation of orderOfOperations){
         if(operation == "node-2"){
           operationObj = {
@@ -202,77 +223,29 @@ function DataProcessing() {
             operationsList.push(operationObj);
         }
       }
-      
+      setTimeout(()=>{
+        setActiveSteps([0,1]);
+      },300)
+
       makeRequestForPipeline(operationsList);
   }
 
-  const handlePipelineSteps = (step, isFirst=false)=>{
-    console.log(`step = ${step}`)
-
-    if(pipelineSteps == 2){
-      if(step == 1){ 
-        updateSteps();
-        colorCircleForNextStep();      
-      } else {
-        updateSteps();
-        colorCircleForNextStep(); 
-      }
-
-    } else {
-      if(step == 1){ 
-        updateSteps();
-        colorCircleForNextStep();      
-      } else if(step == pipelineSteps){
-        
-      
-        setIsPipelineStarted(false);
-      } else {
-        
-        updateSteps();
-        colorCircleForNextStep();
-      }
-    }
-  
+  const handleDeletePipeline = ()=>{
+    dispatch(setNodes([]));
+    dispatch(clearDataset());
+    dispatch(resetSelectedModelType());
+    dispatch(removeDataFeaturingColumns());
+    dispatch(setNormalizationColumns([]));    
+    dispatch(setStandardizationColumns([]));
+    dispatch(setImputationAlgs([]));
+    dispatch(setMappedNodes([]));
+    dispatch(setConstantValueImputationColumns([]));
+    dispatch(setStoredConstantValueImputationValues([]));
+    dispatch(setEdgeToDelete(""));
+    dispatch(setMappedEdges([]));
+    dispatch(setMLAlgorithmTarget({}));
   }
 
-  const handleSocketMessages = (socket_message)=>{
-    
-    try{
-      socket_message = JSON.parse(socket_message);
-    } catch(err){
-      console.log(err);
-      return;
-    }
-    
-    if(socket_message.type == "Error"){
-      blockAlert(socket_message.message);
-      console.log("Pipeline started was turned off from Error");
-      setIsPipelineStarted(false);
-    } else {
-      handlePipelineSteps(socket_message.stage_num+2, false);
-      const message_to_send = `${socket_message.operation_name.operation_name} was completed successfully!`
-      blockSuccess(message_to_send);
-    }
-
-  }
-
-  socket.addEventListener("open", event => {
-    // socket.send("Connection established")
-    // socket.send() -> aceasta functie este folosita pentru a trimite date la websocket
-    console.log("The connection to the websocket was established!")
-    
-  });
-  
-  socket.addEventListener("message", event => {
-    //pe event.data se afla datele pe care le primesti de la websocket
-    // handleSocketMessages(event.data);
-    handleSocketMessages(event.data);
-  });
-
-  socket.addEventListener("error", (event) => {
-    console.error("WebSocket encountered an error:", event);
-
-  });
 
   useEffect(()=>{
     
@@ -286,44 +259,72 @@ function DataProcessing() {
 
   },[nodes])
 
-  useEffect(()=>{
-    if(pipelineEdges!=0){
-      resetSteps();
-      populatePipelineBubbles(pipelineEdges.length+1);
-    }
-  },[pipelineEdges])
-
-
-  
-
+ 
     return (
       <div style={{ height: '100%' }}>        
         <div className="flow-container">
           {
                 areNodesSelected &&
+                <>
                 <div class="container">
                 {isPipelineStarted ? <div className="pipeline-controller pipeline-started">
-                  <p className="play-btn" onClick={()=>{setIsPipelineStarted(false)}}><FontAwesomeIcon icon={faCircleStop} /></p>
+                  
                   <p>Running...</p>
                 </div>
                  : 
               <div className="pipeline-controller">
-                 <p className="play-btn" onClick={()=>{startPipelineAndMakeRequests()}}><FontAwesomeIcon icon={faCirclePlay} /></p>
+                 <p className="play-btn" onClick={()=>{  setTimeout(()=>{ setActiveSteps([0]) ;startPipelineAndMakeRequests()},500) }}><FontAwesomeIcon icon={faCirclePlay} /></p>
                  <p>Start Pipeline</p>
                </div>
                }     
-               {
-                displayPipelineSteps &&
-                <div className="steps">
-                  {pipelineBubbles}
-                <div className="progress-bar">
-                 <span className="indicator" style={{width:"10%",marginLeft:"-200px"}}></span>
-                 </div>
-                </div>
-               }
+                <Box sx={{ width: '150%', marginLeft:"50px" , backgroundColor:"rgb(255,255,255,0.8)", borderRadius:"10px", padding:"10px" }}>
+                    <Stepper activeStep={activeSteps}>
+                      {steps.map((label, index) => {
+                        const labelProps = {};
+                        if (isStepFailed(index)) {
+                          labelProps.optional = (
+                            <Typography variant="caption" color="error">
+                              
+                            </Typography>
+                          );
+
+                          labelProps.error = true;
+                        } 
+                      
+                        return (
+                          <Step key={label} sx={{
+                            "& .MuiStepLabel-label": { fontSize: "24px", fontWeight:"bold" }, // Increase label font size
+                            "& .MuiStepLabel-iconContainer": { fontSize: "30px",  fontWeight:"bold" }, // Increase icon font size
+                            "& .MuiStepIcon": {
+                              width: "46px", // Use px or rem for font-size consistency
+                              height: "46px",
+                            },
+                          }}
+                            active={activeSteps.includes(index)}
+                          >
+                            <StepLabel {...labelProps}>{label}</StepLabel>
+                          </Step>
+                        );
+                      })}
+                    </Stepper>
+              </Box>
               </div>
+               <div className="side-info-container">
+                <HtmlTooltip title="Delete pipeline">
+                    <FontAwesomeIcon icon={faTrashCan}  onClick={()=>{setAreYouSureOpen(true)}} className="trash-icon-side"/>
+                </HtmlTooltip>
+               <HtmlTooltip
+                   title="Pipeline details and settings"
+               >
+                   <Button><FontAwesomeIcon icon={faToolbox}  className="info-icon-side"/>   </Button>
+               </HtmlTooltip>
+               <HtmlTooltip title="Logs">
+                   <FontAwesomeIcon icon={faScroll} onClick={() => {}} className="info-icon-side"/>
+               </HtmlTooltip>
+           </div>
+           </>
          }
-           
+          <AreYouSure handleClose={()=>{setAreYouSureOpen(false)}}  open={areYouSureOpen} yesAction={handleDeletePipeline} noAction={()=>{}}  alertDialogTitle={"Pipeline delete"}  dialogMessage={"Are you sure you want to delete the pipeline?"}/>
             <Toaster/>
              <LeftMenu/>
              <Flow/> 
