@@ -16,7 +16,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useDispatch } from 'react-redux';
 import { useSelector } from "react-redux/es/hooks/useSelector";
-import {resetNormalizationAndStandardization, setNodes, resetSelectedModelType} from "../../../reducers/nodeSlice";
+import {resetNormalizationAndStandardization, setNodes, resetSelectedModelType, setIsTrainingStarted} from "../../../reducers/nodeSlice";
 
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
@@ -27,6 +27,7 @@ function createData(name, calories, fat, carbs, protein) {
 export default memo(({ data, isConnectable }) => {
  
   const dispatch = useDispatch();
+  const trainingStarted = useSelector((state)=> state.is_training_started);
   const [isTraining, setIsTraining] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
   const allNodes = useSelector((state)=>state.nodes);
@@ -51,6 +52,10 @@ export default memo(({ data, isConnectable }) => {
     },100)
 
   }
+
+  React.useEffect(()=>{
+    setIsTraining(isTraining);
+  },[setIsTrainingStarted])
 
  
   return (
@@ -104,7 +109,7 @@ export default memo(({ data, isConnectable }) => {
                 }
                {isTraining &&    
                <div className='model-status-container'> 
-                  <p>Model status:<span>Training..</span></p>
+                  <p>Model status:<span>Processing..</span></p>
                   <div class="loading-spinner">
                     <div class="dot1"></div>
                     <div class="dot2"></div>

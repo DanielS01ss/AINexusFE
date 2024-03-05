@@ -15,7 +15,7 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { faCircleInfo, faTrashCan, faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { styled } from '@mui/material/styles';
 import { START_PIPELINE } from "../../utils/apiEndpoints";
-import { setNodes,clearDataset, resetSelectedModelType, removeDataFeaturingColumns, setNormalizationColumns, setStandardizationColumns, setImputationAlgs,setConstantValueImputationColumns, setStoredConstantValueImputationValues, setMappedEdges,setMLAlgorithmTarget, setEdgeToDelete, setMappedNodes } from "../../reducers/nodeSlice";
+import { setIsTrainingStarted, setNodes,clearDataset, resetSelectedModelType, removeDataFeaturingColumns, setNormalizationColumns, setStandardizationColumns, setImputationAlgs,setConstantValueImputationColumns, setStoredConstantValueImputationValues, setMappedEdges,setMLAlgorithmTarget, setEdgeToDelete, setMappedNodes } from "../../reducers/nodeSlice";
 import toast, { Toaster } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import {getToken} from "../../utils/getTokens";
@@ -99,20 +99,17 @@ function DataProcessing() {
     }
 
     const token = getToken();
+    dispatch(setIsTrainingStarted(true));
 
     try{
-      const resp = await axios.post(START_PIPELINE, requestObject,{
-        headers:{
-          "Content-Type":"application/json",
-          "Authorization":`Bearer ${token}`
-        }
-      });
-      
+      const resp = await axios.post(START_PIPELINE, requestObject);
       parsePipelineResponse(resp.data);
       setIsPipelineStarted(false);
+      dispatch(setIsTrainingStarted(false));
     } catch(err){
       console.log(err);
       setIsPipelineStarted(false);
+      dispatch(setIsTrainingStarted(false));
     }
   }
 
