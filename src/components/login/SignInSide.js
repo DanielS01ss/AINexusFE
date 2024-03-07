@@ -17,6 +17,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AUTHENTICATION_LOGIN } from '../../utils/apiEndpoints';
 import { saveToken, saveRefreshToken } from '../../utils/saveTokens';
 import Alert from '@mui/material/Alert';
+import jwt_decode from 'jwt-decode';
 import Stack from '@mui/material/Stack';
 import { useNavigate } from 'react-router-dom';
 
@@ -81,6 +82,9 @@ export default function SignIn() {
       saveToken(response.data.token);
       saveRefreshToken(response.data.refreshToken);
       toggleAlert("success");
+      const decoded_token = jwt_decode(response.data.refreshToken);
+      console.log("The decoded token is:");
+      console.log(decoded_token);
       setTimeout(()=>{
         handleClick();
       },2000)
