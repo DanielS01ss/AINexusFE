@@ -14,7 +14,6 @@ export const LandingPage = ()=>{
         navigate('/login');
       };
      
-
     return(
     <div className="landing-page-container">
         <div style={{
@@ -31,7 +30,7 @@ export const LandingPage = ()=>{
                 <div>
                     <div className="lading-page-main-text-container">
                         <p className="lading-page-main-text-title">AI NEXUS</p>
-                        <p> Elevate your business insights effortlessly with our platform's intuitive design. Experience the future of data transformation and AI innovation at your fingertips.</p>
+                        <p>Experience the future of AI!</p>
                         <button onClick={()=>{handleClick()}} className="landing-page-button">Try it out!</button>
                     </div>
                 </div>

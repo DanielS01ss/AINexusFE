@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Flow from "./Flow";
 import styles from './DataProcessing.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCirclePlay, faCircleStop, faScroll, faToolbox } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import LeftMenu from "./LeftMenu";
@@ -21,6 +21,7 @@ import { useDispatch } from 'react-redux';
 import {getToken} from "../../utils/getTokens";
 import axios from "axios";
 import AreYouSure from "./dialogs/AreYouSure/AreYouSure";
+import { jwtDecode } from "jwt-decode";
 
 
 
@@ -93,20 +94,37 @@ function DataProcessing() {
 
   const makeRequestForPipeline = async(operationsList)=>{
     const datasetSignature = selectedDataset[0].database_name;
-    const requestObject = {
-      dataset_name: datasetSignature,
-      operations:[...operationsList]
-    }
+   
 
     const token = getToken();
+    let email;
+    try{
+      email = JSON.parse(jwtDecode(token).sub).email;  
+ 
+    } catch(err){
+      //handle the case were you were not able to make thos requests
+      console.log(err);
+      return;
+    }
+
+    const requestObject = {
+      dataset_name: datasetSignature,
+      operations:[...operationsList],
+      email: email
+    }
+    
+
     dispatch(setIsTrainingStarted(true));
 
     try{
       const resp = await axios.post(START_PIPELINE, requestObject);
+      console.log("Response from the request:");
+      console.log(resp.data);
       parsePipelineResponse(resp.data);
       setIsPipelineStarted(false);
       dispatch(setIsTrainingStarted(false));
     } catch(err){
+      setPipelineFailed(true);
       console.log(err);
       setIsPipelineStarted(false);
       dispatch(setIsTrainingStarted(false));

@@ -1,0 +1,84 @@
+.page-title{
+    margin-top: 40px;
+    padding:10px;
+    font-size: 1.9rem;
+}
+
+.cards-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.card{
+    width: 80%;
+    margin: auto;
+    margin-top:60px;
+    margin-bottom: 20px;
+    border: 1px solid rgb(225, 225, 225);
+    border-radius: 10px;
+    -webkit-box-shadow: 10px 10px 6px -10px rgba(0,0,0,0.75);
+-moz-box-shadow: 10px 10px 6px -10px rgba(0,0,0,0.75);
+box-shadow: 10px 10px 6px -10px rgba(0,0,0,0.75);
+height: 300px;
+}
+
+.back-arrow{
+    font-size: 2.4rem;
+    float:left;
+    padding:20px;
+}
+
+.back-arrow:hover{
+    cursor: pointer;
+}
+
+.card-header{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.card-icon{
+    margin-top:80px;
+    margin-left:200px;
+    font-size: 4.9rem;
+}
+
+.card-header-model-info{
+    margin-top: 60px;
+    margin-right: 10%;
+    font-size: 1.1rem;
+}
+
+.card-header-model-date{
+    margin-top:-20px;
+    margin-left: 22%;
+    font-size: 1.2rem;
+}
+
+.card-model-footer{
+    margin-top:60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.no-models-trained{
+    margin-top:60px;
+    padding:10px;
+    width: 100%;
+    font-size: 1.9rem;
+    font-style: italic;
+}
+
+.loading-container{
+    margin-top:5%;
+    margin-left: 5%;
+}
+
+.loading-text-for-spinner{
+    font-size: 1.5rem;
+
+}

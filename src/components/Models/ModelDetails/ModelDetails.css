@@ -1,0 +1,38 @@
+.model-info-card-container{
+    padding:10px;
+    width: 90%;
+    margin:auto;
+    background-color: rgb(243, 242, 242);
+    margin-top:40px;
+    height: 600px;
+    border: 1px solid rgb(225, 225, 225);
+    border-radius: 10px;
+    -webkit-box-shadow: 10px 10px 5px -5px rgba(224,221,224,1);
+-moz-box-shadow: 10px 10px 5px -5px rgba(224,221,224,1);
+box-shadow: 10px 10px 5px -5px rgba(224,221,224,1);
+}
+
+.model-info-card-body{
+    padding:20px;
+    width: 100%;
+    margin-top:50px;
+    text-align: left;
+    margin-left:10px;
+}
+
+.model-info-card-model-name{
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.model-info-card-parameters-section{
+    padding:20px;
+    font-size: 1.2rem;
+    margin-top:20px;
+    float:left;
+    font-weight: bold;
+    text-align: center;
+    margin:auto;
+    margin-left:50px;
+    width: 90%;
+}

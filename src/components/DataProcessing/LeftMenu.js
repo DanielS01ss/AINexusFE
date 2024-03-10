@@ -159,6 +159,7 @@ export default function MiniDrawer() {
     
   }
 
+
   React.useEffect(()=>{
     if(dataset.length != 0){
       setIsDatasetSelected(true);
@@ -283,7 +284,7 @@ export default function MiniDrawer() {
         </List>
         <Divider />
         <List>
-        <ListItem key={"My models"} disablePadding sx={{ display: 'block' }}>
+        <ListItem key={"My models"} disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/models")}}>
               <ListItemButton
                   sx={{
                     minHeight: 48,
