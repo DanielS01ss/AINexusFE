@@ -1,0 +1,61 @@
+.all-logs-container{
+    padding:10px;
+}
+
+.pipeline-run-title{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.failed-icon{
+    padding-right:90px;
+    color:red;
+    font-size: 1.3rem;
+}
+
+.success-icon{
+    padding-right:90px;
+    color:green;
+    font-size: 1.3rem;
+}
+
+.logs-bullet-point-success{
+    float:left;
+    display: flex;
+    flex-direction: row;
+    border-radius: 20px;
+}
+
+.step-logs-container{
+    display: flex;
+    flex-direction: column;
+    
+    padding-top:10px;
+    padding-bottom: 10px;
+}
+
+.step-logs-container-msg{
+    float:left;
+    margin-top:20px;
+    margin-right: 10%;
+    text-align: left;
+}
+
+.step-logs-msg-title{
+    font-weight: bold;
+    padding:5px;
+    color: rgb(255, 116, 116);
+}
+
+.pipeline-name-container{
+    padding:10px;
+    float:right;
+    margin-bottom: 10px;
+}
+
+.pipeline-run-success-status{
+    width: 200px;
+    padding:2px;
+}

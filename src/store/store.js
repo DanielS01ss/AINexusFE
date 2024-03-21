@@ -1,17 +1,15 @@
-import {configureStore} from "@reduxjs/toolkit";
+import {configureStore, combineReducers} from "@reduxjs/toolkit";
 import nodeReducer from "../reducers/nodeSlice";
+import {loadState, saveState} from "../utils/localStorage";
 
-
-const persistentState = localStorage.getItem('state') ? JSON.parse(localStorage.getItem('state')) : {}
-
-export const store = configureStore({
-    reducer:nodeReducer,
-    persistentState
-});
-
-
-store.subscribe(() => {
-    const state = store.getState();
-    const serializedState = JSON.stringify(state);
-    localStorage.setItem('state', serializedState);
+const persistedStore = loadState();
+const reducers = combineReducers({
+  node:nodeReducer
 })
+
+export const store = configureStore({reducer: nodeReducer, preloadedState:persistedStore});
+
+store.subscribe(()=>{
+    const currentState = store.getState();
+    saveState(currentState);
+  })

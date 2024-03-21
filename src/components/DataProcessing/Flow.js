@@ -1,4 +1,5 @@
 import React, { useCallback,useState, useMemo, useEffect } from 'react';
+
 import ReactFlow, { MiniMap,Background, Controls, useNodesState, useEdgesState, addEdge, applyEdgeChanges, applyNodeChanges } from 'reactflow';
 import Dataset from './custom_nodes/Dataset';
 import 'reactflow/dist/style.css';
@@ -7,7 +8,9 @@ import Normalization from './custom_nodes/Normalization';
 import DataImputation from './custom_nodes/DataImputation';
 import ModelTraining from './custom_nodes/ModelTraining';
 import CustomEdge from "./custom_edges/CustomEdge.js";
+import { useReactFlow } from 'reactflow';
 import {  useSelector } from "react-redux/es/hooks/useSelector";
+import { createRef } from 'react';
 import {setMappedNodes, setMappedEdges} from "../../reducers/nodeSlice";
 import {useDispatch} from 'react-redux';
 
@@ -17,13 +20,17 @@ function Flow() {
   const edgeTypes = useMemo(() => ({ special: CustomEdge }), []);
   const storedNodes = useSelector((state)=>state.nodes);
   const storedDataset = useSelector((state)=>state.selectedDataset);
+  const storedEdges = useSelector((state)=> state.edges);
   const edgeToDelete = useSelector((state)=>state.edgeToDelete);
   const [placedNodes, setPlacedNodes] = useState([]);
   const initialNodes = []; 
   const initialEdges = [];
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(initialEdges);
-  const [variant, setVariant] = useState('cross');
+  const [firstRender, setFirstRender] = useState(true);
+
+
+  let xPosition = 0;
   const dispatch = useDispatch();
   
   const onNodesChange = useCallback(
@@ -64,6 +71,9 @@ function Flow() {
     }
   };
 
+  const onLoad = (reactFlowInstance) => {
+    reactFlowInstance.fitView();
+  };
 
   const containsNode = (nodeType, allNodes)=>{
    
@@ -108,13 +118,14 @@ function Flow() {
     
     for(let nodeType of nodeData){
       
+
       if(nodeType == "Dataset" && !containsNode(nodeType,nodes)){
       
         newNodes.push({
           id: 'node-1',
           type: 'dataSet',
           data: { label: 'Dataset' },
-          position: { x: 150, y: 25 },
+          position: { x: xPosition, y: 25 },
        });
       
       } 
@@ -125,7 +136,7 @@ function Flow() {
            id: 'node-2',
            type: 'featureSelection',
            data: { label: 'Data featuring' },
-           position: { x: 850, y: 5 },
+           position: { x: xPosition, y: 25 },
           });
         
       }  
@@ -136,7 +147,7 @@ function Flow() {
             id: 'node-3',
             type: 'normalization',
             data: { label: 'Normalization' },
-            position: { x: 1550, y: 45 },
+            position: { x: xPosition, y: 25 },
           }
         );
         
@@ -148,7 +159,7 @@ function Flow() {
             id: 'node-4',
             type: 'dataImputation',
             data: { label: 'Data Imputation' },
-            position: { x: 2550, y: 195 },
+            position: { x: xPosition, y: 25 },
           }
         ); 
         
@@ -160,10 +171,11 @@ function Flow() {
             id: 'node-5',
             type: 'modelTraining',
             data: { label: 'Model Training' },
-            position: { x: 3250, y: 500 },
+            position: { x: xPosition, y: 25 },
           }
         ); 
       } 
+      xPosition = xPosition+800;
     }
     
     setNodes(newNodes);
@@ -232,6 +244,7 @@ function Flow() {
       }
       mappedEdgeInfo.push(edgeInfo);
     }
+    
    dispatch(setMappedEdges(mappedEdgeInfo));
    setTheNodes();
   } 
@@ -248,12 +261,27 @@ function Flow() {
   },[edgeToDelete])
 
   useEffect(()=>{
-    verifyAddedEdgeIsOk();
-
-    setTheEdges();
+    if(edges.length != 0){
+      verifyAddedEdgeIsOk();
+      setTheEdges();
+    } 
+    
+    if(edges.length != 0){
+      dispatch(setMappedEdges(edges));
+    }
+    
   },[edges])
 
- 
+  useEffect(()=>{
+  
+    if(firstRender == true){
+      setFirstRender(false);
+       setEdges(storedEdges);
+       console.log(storedEdges);
+    }
+  },[storedEdges])
+
+
     return (
       <div style={{ width: '96vw', height: '100vh' }}>
         <ReactFlow 
@@ -265,6 +293,7 @@ function Flow() {
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
+          
         >
           <MiniMap nodeColor={nodeColor} nodeStrokeWidth={3} zoomable pannable style={{
             border: "1px solid black"

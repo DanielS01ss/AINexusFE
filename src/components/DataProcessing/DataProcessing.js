@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Flow from "./Flow";
 import styles from './DataProcessing.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCirclePlay, faCircleStop, faScroll, faToolbox } from '@fortawesome/free-solid-svg-icons';
+import { faCirclePlay, faScroll, faToolbox } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import LeftMenu from "./LeftMenu";
 import Box from '@mui/material/Box';
@@ -12,15 +12,18 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import { faCircleInfo, faTrashCan, faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { styled } from '@mui/material/styles';
-import { START_PIPELINE } from "../../utils/apiEndpoints";
-import { setIsTrainingStarted, setNodes,clearDataset, resetSelectedModelType, removeDataFeaturingColumns, setNormalizationColumns, setStandardizationColumns, setImputationAlgs,setConstantValueImputationColumns, setStoredConstantValueImputationValues, setMappedEdges,setMLAlgorithmTarget, setEdgeToDelete, setMappedNodes } from "../../reducers/nodeSlice";
+import { START_PIPELINE, POST_PIPELINE_LOGS } from "../../utils/apiEndpoints";
+import { setTrainedModel, setIsTrainingStarted, setNodes,clearDataset, resetSelectedModelType, removeDataFeaturingColumns, setNormalizationColumns, setStandardizationColumns, setImputationAlgs,setConstantValueImputationColumns, setStoredConstantValueImputationValues, setMappedEdges,setMLAlgorithmTarget, setEdgeToDelete, setMappedNodes } from "../../reducers/nodeSlice";
 import toast, { Toaster } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import {getToken} from "../../utils/getTokens";
+import { getCurrentTimestamp } from "../../utils/getCurrentTimestamp";
 import axios from "axios";
 import AreYouSure from "./dialogs/AreYouSure/AreYouSure";
+import Tools from "./dialogs/Tools/Tools";
+import Logs from "./dialogs/Logs/Logs";
 import { jwtDecode } from "jwt-decode";
 
 
@@ -38,12 +41,16 @@ function DataProcessing() {
   const standardizationColumns = useSelector((state)=> state.standardizationColumns);
   const imputationAlgs = useSelector((state)=> state.imputationAlgs);
   const storedMLAlgorithmTarget = useSelector((state)=>state.ml_algorithm_target);
+  const [currentDate, setCurrentDate] = useState("");
   const [isPipelineStarted, setIsPipelineStarted] = useState(false);
   const [displayPipelineSteps, setDisplayPipelineSteps] = useState(false);
   const [areNodesSelected , setAreNodesSelected] = useState(false);
   const [pipelineFailed, setPipelineFailed] = useState(false);
   const [areYouSureOpen, setAreYouSureOpen] = useState(false);
   const [pipelineMeetRequirements, setPipelineMeetRequirements] = useState(true);
+  const [areToolsOpen, setAreToolsOpen] = useState(false);
+  const [areLogsOpen, setAreLogsOpen] = useState(false);
+  const [hasNotification, setHasNotification] = useState(false);
   const steps = ['Start', 'Pipeline steps', 'Finish'];
   const [activeSteps, setActiveSteps] = useState([]);
   const dispatch = useDispatch();
@@ -92,6 +99,28 @@ function DataProcessing() {
     }
   }
 
+  const savePipelineLogs = async(logs)=>{
+    try{
+      const token = getToken();
+      const theCurrentDate = getCurrentTimestamp();
+      const email = JSON.parse(jwtDecode(token).sub).email;
+      const resp = await axios.post(POST_PIPELINE_LOGS,{
+        "email": email,
+        "date": theCurrentDate,
+        "logs": logs
+      });
+      
+    } catch(err){
+      console.log(err);
+    }
+  }
+
+  const getCurrentTrainedModel = (response_data)=>{
+    const parsedResponseData = JSON.parse(response_data);
+    const theTrainedModel = parsedResponseData["trained_model"];
+    dispatch(setTrainedModel(theTrainedModel));
+  }
+
   const makeRequestForPipeline = async(operationsList)=>{
     const datasetSignature = selectedDataset[0].database_name;
    
@@ -102,7 +131,7 @@ function DataProcessing() {
       email = JSON.parse(jwtDecode(token).sub).email;  
  
     } catch(err){
-      //handle the case were you were not able to make thos requests
+      
       console.log(err);
       return;
     }
@@ -113,13 +142,13 @@ function DataProcessing() {
       email: email
     }
     
-
+  
     dispatch(setIsTrainingStarted(true));
-
     try{
       const resp = await axios.post(START_PIPELINE, requestObject);
-      console.log("Response from the request:");
-      console.log(resp.data);
+      getCurrentTrainedModel(resp.data);
+      savePipelineLogs(resp.data);
+      setHasNotification(true);
       parsePipelineResponse(resp.data);
       setIsPipelineStarted(false);
       dispatch(setIsTrainingStarted(false));
@@ -331,15 +360,22 @@ function DataProcessing() {
                <HtmlTooltip
                    title="Pipeline details and settings"
                >
-                   <Button><FontAwesomeIcon icon={faToolbox}  className="info-icon-side"/>   </Button>
+                   <Button onClick={()=>{setAreToolsOpen(true);}}><FontAwesomeIcon icon={faToolbox}  className="info-icon-side"/>   </Button>
                </HtmlTooltip>
                <HtmlTooltip title="Logs">
-                   <FontAwesomeIcon icon={faScroll} onClick={() => {}} className="info-icon-side"/>
+                     {hasNotification && <div className="logs-notification-bullet"></div>} 
+                     <Button onClick={()=>{setHasNotification(false); setAreLogsOpen(true)}}>
+                        <FontAwesomeIcon icon={faScroll} onClick={() => {}} className="info-icon-side"/>
+                     </Button>
+                   
                </HtmlTooltip>
            </div>
            </>
          }
-          <AreYouSure handleClose={()=>{setAreYouSureOpen(false)}}  open={areYouSureOpen} yesAction={handleDeletePipeline} noAction={()=>{}}  alertDialogTitle={"Pipeline delete"}  dialogMessage={"Are you sure you want to delete the pipeline?"}/>
+
+           <AreYouSure handleClose={()=>{setAreYouSureOpen(false)}}  open={areYouSureOpen} yesAction={handleDeletePipeline} noAction={()=>{}}  alertDialogTitle={"Pipeline delete"}  dialogMessage={"Are you sure you want to delete the pipeline?"}/>
+           <Tools handleClose={()=>{setAreToolsOpen(false)}} open={areToolsOpen} />
+           {areLogsOpen && <Logs handleClose={()=>{setAreLogsOpen(false)}} open={areLogsOpen} /> }
             <Toaster/>
              <LeftMenu/>
              <Flow/> 

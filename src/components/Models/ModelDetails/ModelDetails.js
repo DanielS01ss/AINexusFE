@@ -7,6 +7,8 @@ import Divider from '@mui/material/Divider';
 import { useTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleLeft} from '@fortawesome/free-solid-svg-icons';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -102,41 +104,40 @@ const ModelDetails = ()=>{
     const [allMetricsNames, setAllMetricsNames] = useState([]);
     const [allMetricsValues, setAllMetricsValues] = useState([]);
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    
-    const rows = [
-        createData('Cupcake', 305, 3.7),
-        createData('Donut', 452, 25.0),
-        createData('Eclair', 262, 16.0),
-        createData('Frozen yoghurt', 159, 6.0),
-        createData('Gingerbread', 356, 16.0),
-        createData('Honeycomb', 408, 3.2),
-        createData('Ice cream sandwich', 237, 9.0),
-        createData('Jelly Bean', 375, 0.0),
-        createData('KitKat', 518, 26.0),
-        createData('Lollipop', 392, 0.2),
-        createData('Marshmallow', 318, 0),
-        createData('Nougat', 360, 19.0),
-        createData('Oreo', 437, 18.0),
-      ];
-
+    const [pageParameters, setPageParameters] = React.useState(0);
+    const [pageMetrics, setPageMetrics] = React.useState(0);
+    const [rowsPerPageParameters, setRowsPerPageParameters] = React.useState(5);
+    const [rowsPerPageMetrics, setRowsPerPageMetrics] = React.useState(5);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const darkTheme = createTheme({
         palette: {
           mode: 'dark',
         },
       });
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-      page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    
+    const emptyRowsParameters =
+      pageParameters > 0 ? Math.max(0, (1 + pageParameters) * rowsPerPageParameters - allParametersNames.length) : 0;
+
+    const emptyRowsMetrics =
+      pageMetrics > 0 ? Math.max(0, (1 + pageMetrics) * rowsPerPageMetrics - allMetricsNames.length) : 0;
   
-    const handleChangePage = (event, newPage) => {
-      setPage(newPage);
+    const handleChangePageParameters = (event, newPage) => {
+      setPageParameters(newPage);
+    };
+
+    const handleChangePageMetrics = (event, newPage) => {
+      setPageMetrics(newPage);
     };
   
-    const handleChangeRowsPerPage = (event) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      setPage(0);
+    const handleChangeRowsPerPageParameters = (event) => {
+      setRowsPerPageParameters(parseInt(event.target.value, 10));
+      setPageParameters(0);
+    };
+
+    const handleChangeRowsPerPageMetrics = (event) => {
+      setRowsPerPageMetrics(parseInt(event.target.value, 10));
+      setPageMetrics(0);
     };
 
     const parseParametricsAndMetrics = async(model_data)=>{
@@ -172,10 +173,12 @@ const ModelDetails = ()=>{
     }
 
     const fetchModelDetails = async(model_name)=>{
+      setIsLoading(true);
         try{
             const resp = await axios.get(GET_MODEL_DETAILS(model_name));
             const model_details = JSON.parse(resp.data.content.content);
             parseParametricsAndMetrics(model_details);
+            setIsLoading(false);
         } catch(err){
             console.log(err);
         }
@@ -193,67 +196,154 @@ const ModelDetails = ()=>{
 
     return(
         <div>
+            <div className="back-arrow" onClick={()=>{navigate(-1)}}>
+                <FontAwesomeIcon icon={faCircleLeft} />
+            </div>
             <div className="model-info-card">
                 <div className="model-info-card-container">
+              
                     <h2>Model Details</h2>
                     <div className="model-info-card-body">
                         <p><span className="model-info-card-model-name">Model Name:</span> <span>{modelName}</span></p>     
                         <p><span className="model-info-card-model-name">Date:</span> <span>18/09/2023</span></p>
                     </div>    
                     <Divider/>
-                    <div className="model-info-card-parameters-section">
-                        <p>Parameters</p>
-                    <ThemeProvider theme={darkTheme}>
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 1000 }} aria-label="custom pagination table">
-                                <TableBody>
-                                {(rowsPerPage > 0
-                                    ? allParametersNames.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    : allParametersNames
-                                ).map((row, index) => (
-                                    <TableRow key={row}>
-                                    <TableCell component="th" scope="row">
-                                        {row}
-                                    </TableCell>
-                                    <TableCell style={{ width: 160 }} align="right">
-                                        {allParametersValues[index]}
-                                    </TableCell>
-                                    </TableRow>
-                                ))}
-                                {emptyRows > 0 && (
-                                    <TableRow style={{ height: 53 * emptyRows }}>
-                                    <TableCell colSpan={6} />
-                                    </TableRow>
-                                )}
-                                </TableBody>
-                                <TableFooter>
-                                <TableRow>
-                                    <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                    colSpan={3}
-                                    count={allParametersNames.length}
-                                    rowsPerPage={rowsPerPage}
-                                    page={page}
-                                    slotProps={{
-                                        select: {
-                                        inputProps: {
-                                            'aria-label': 'rows per page',
-                                        },
-                                        native: true,
-                                        },
-                                    }}
-                                    onPageChange={handleChangePage}
-                                    onRowsPerPageChange={handleChangeRowsPerPage}
-                                    ActionsComponent={TablePaginationActions}
-                                    />
-                                        </TableRow>
-                                    </TableFooter>
-                                </Table>
-                            </TableContainer>
+                    <div className="model-info-card-sections-container">
+                        <div className="model-info-card-parameters-section">
+                            <p>Parameters</p>
 
-                    </ThemeProvider>
+                      {
+                        isLoading && 
+                        <div class="loading-spinner">
+                            <div class="dot1"></div>
+                            <div class="dot2"></div>
+                            <div class="dot3"></div>
+                        </div>
+                      }        
+                      {
+                        !isLoading &&
+                        <ThemeProvider theme={darkTheme}>
+                            <TableContainer component={Paper}>
+                                <Table sx={{ minWidth: 1000 }} aria-label="custom pagination table">
+                                    <TableBody>
+                                    {(rowsPerPageParameters > 0
+                                        ? allParametersNames.slice(pageParameters * rowsPerPageParameters, pageParameters * rowsPerPageParameters + rowsPerPageParameters)
+                                        : allParametersNames
+                                    ).map((row, index) => (
+                                        <TableRow key={row}>
+                                        <TableCell component="th" scope="row">
+                                            {row}
+                                        </TableCell>
+                                        <TableCell style={{ width: 160 }} align="right">
+                                            {allParametersValues[index]}
+                                        </TableCell>
+                                        </TableRow>
+                                    ))}
+                                    {emptyRowsParameters > 0 && (
+                                        <TableRow style={{ height: 53 * emptyRowsParameters }}>
+                                        <TableCell colSpan={6} />
+                                        </TableRow>
+                                    )}
+                                    </TableBody>
+                                    <TableFooter>
+                                    <TableRow>
+                                        <TablePagination
+                                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                        colSpan={3}
+                                        count={allParametersNames.length}
+                                        rowsPerPage={rowsPerPageParameters}
+                                        page={pageParameters}
+                                        slotProps={{
+                                            select: {
+                                            inputProps: {
+                                                'aria-label': 'rows per page',
+                                            },
+                                            native: true,
+                                            },
+                                        }}
+                                        onPageChange={handleChangePageParameters}
+                                        onRowsPerPageChange={handleChangeRowsPerPageParameters}
+                                        ActionsComponent={TablePaginationActions}
+                                        />
+                                            </TableRow>
+                                        </TableFooter>
+                                    </Table>
+                                </TableContainer>
+
+                        </ThemeProvider>
+
+                      }
+                        
+                          
+                        </div>
+                        <Divider/>
+                        <div className="model-info-card-parameters-section">
+                            <p>Metrics</p>
+                      {
+                        isLoading && 
+                        <div class="loading-spinner">
+                            <div class="dot1"></div>
+                            <div class="dot2"></div>
+                            <div class="dot3"></div>
+                        </div>
+                      } 
+                      {
+                        !isLoading &&
+                          <ThemeProvider theme={darkTheme}>
+                            <TableContainer component={Paper}>
+                                <Table sx={{ minWidth: 1000 }} aria-label="custom pagination table">
+                                    <TableBody>
+                                    {(rowsPerPageParameters > 0
+                                        ? allMetricsNames.slice(pageMetrics * rowsPerPageMetrics, pageMetrics * rowsPerPageMetrics + rowsPerPageMetrics)
+                                        : allMetricsNames
+                                    ).map((row, index) => (
+                                        <TableRow key={row}>
+                                        <TableCell component="th" scope="row">
+                                            {row}
+                                        </TableCell>
+                                        <TableCell style={{ width: 160 }} align="right">
+                                            {allMetricsValues[index]}
+                                        </TableCell>
+                                        </TableRow>
+                                    ))}
+                                    {emptyRowsMetrics > 0 && (
+                                        <TableRow style={{ height: 53 * emptyRowsMetrics }}>
+                                        <TableCell colSpan={6} />
+                                        </TableRow>
+                                    )}
+                                    </TableBody>
+                                    <TableFooter>
+                                    <TableRow>
+                                        <TablePagination
+                                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                        colSpan={3}
+                                        count={allMetricsNames.length}
+                                        rowsPerPage={rowsPerPageMetrics}
+                                        page={page}
+                                        slotProps={{
+                                            select: {
+                                            inputProps: {
+                                                'aria-label': 'rows per page',
+                                            },
+                                            native: true,
+                                            },
+                                        }}
+                                        onPageChange={handleChangePageMetrics}
+                                        onRowsPerPageChange={handleChangeRowsPerPageMetrics}
+                                        ActionsComponent={TablePaginationActions}
+                                        />
+                                            </TableRow>
+                                        </TableFooter>
+                                    </Table>
+                                </TableContainer>
+                        </ThemeProvider>
+                      }
                        
-                    </div>
+                          
+                        </div>
+
+
+                    </div>                    
                 </div>
             </div>
         </div>

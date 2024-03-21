@@ -13,11 +13,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
+import TimelineIcon from '@mui/icons-material/Timeline';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import StorageIcon from '@mui/icons-material/Storage';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import WidgetsIcon from '@mui/icons-material/Widgets';
 import DataSelectDialog from './dialogs/DataSelectDialog/DataSelectDialog';
@@ -305,6 +307,52 @@ export default function MiniDrawer() {
                    <WidgetsIcon/>
                   </ListItemIcon>
                   <ListItemText primary={"My Models"} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+            </ListItem>
+            <ListItem key={"Saved Pipelines"} disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/models")}}>
+              <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                    color:"white"
+                  }}
+                  key={4}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                      color:"white"
+                    }}
+                  >
+                   <TimelineIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={"Saved Pipelines"} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+            </ListItem>
+            <ListItem key={"Generate pipelines"} disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/models")}}>
+              <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                    color:"white"
+                  }}
+                  key={4}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                      color:"white"
+                    }}
+                  >
+                   <TipsAndUpdatesIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={"Generate pipelines"} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
             </ListItem>
         </List>

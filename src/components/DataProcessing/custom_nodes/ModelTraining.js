@@ -1,10 +1,10 @@
-import React, { memo } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { Handle, Position } from 'reactflow';
 import styles from "./Dataset.css";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
-import { faDivide } from '@fortawesome/free-solid-svg-icons';
+import { faDivide, faCircleNodes, faSquarePollVertical, faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { faDiagramProject } from '@fortawesome/free-solid-svg-icons';
 import { faStopwatch } from '@fortawesome/free-solid-svg-icons';
 import Table from '@mui/material/Table';
@@ -14,27 +14,31 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useSelector } from "react-redux/es/hooks/useSelector";
-import {resetNormalizationAndStandardization, setNodes, resetSelectedModelType, setIsTrainingStarted} from "../../../reducers/nodeSlice";
+import {setNodes, resetSelectedModelType, setIsTrainingStarted} from "../../../reducers/nodeSlice";
+
 
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
-
-
-
 export default memo(({ data, isConnectable }) => {
  
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const trainingStarted = useSelector((state)=> state.is_training_started);
+  const modelParameters = useSelector((state)=>state.ml_algorithm_parameters);
+  const trainedModel = useSelector((state)=> state.trainedModel);
   const [isTraining, setIsTraining] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
+  const [hasModelParameters, setHasModelParameters] = useState(false);
+
   const allNodes = useSelector((state)=>state.nodes);
   const rows = [
-    createData('Training loss', 159),
-    createData('Validation Loss', 237),
-    createData('Training Accuracy', 262)
+    createData('n_depth', 159),
+    createData('max_depth', 237),
+    createData('min_samples_split', 262)
   ];
 
   const darkTheme = createTheme({
@@ -53,9 +57,27 @@ export default memo(({ data, isConnectable }) => {
 
   }
 
+  const navigateToStatistics = ()=>{
+    if(trainedModel.length != 0){
+      navigate();
+    }
+    
+  }
+
   React.useEffect(()=>{
     setIsTraining(isTraining);
   },[setIsTrainingStarted])
+
+  useEffect(()=>{
+    if(modelParameters){
+      if(Object.keys(modelParameters).length == 0){
+        setHasModelParameters(false);
+      } else {
+        setHasModelParameters(true);
+      }
+    }
+   
+  },[modelParameters])
 
  
   return (
@@ -78,10 +100,10 @@ export default memo(({ data, isConnectable }) => {
             <h3>  </h3>
             <hr/>
               <div className='training-card-body'>
-                {!isTraining && 
+                {hasModelParameters && 
                 <>
-                  <h1>Real Time Data</h1>
-                 <p className='elapsed-time'><FontAwesomeIcon icon={faStopwatch} /> <span className='elapsed-time-text'>Elapsed Time:</span><span>0m</span><span>0s</span></p>
+                  <h1>Model parameters</h1>
+                 <p className='elapsed-time'>Random Forest</p>
                  <TableContainer component={Paper} sx={{ maxWidth: 550,backgroundColor:"#121212", padding:"10px" }} theme={darkTheme}>
                   <Table sx={{ maxWidth: 550}} aria-label="simple table" >
                     <TableHead>
@@ -107,6 +129,16 @@ export default memo(({ data, isConnectable }) => {
                </TableContainer>
                 </>
                 }
+                {
+                  !hasModelParameters &&
+                  <div className='model-training-no-params'>
+                    <p className="model-training-no-params-text">There are no parameters for the model!</p>
+                    <div className="no-data-container">
+                      <FontAwesomeIcon icon={faCircleNodes} />
+                    </div>
+                    
+                  </div>
+                }
                {isTraining &&    
                <div className='model-status-container'> 
                   <p>Model status:<span>Processing..</span></p>
@@ -127,7 +159,8 @@ export default memo(({ data, isConnectable }) => {
               </div>
             <hr/>
             <div className='dataset-node-bottom-toolbox'>
-                <button className='dataset-toolbox-btn model-data-btn'>See model data <FontAwesomeIcon icon={faArrowUpRightFromSquare}/></button>
+                <button className='dataset-toolbox-btn model-data-btn' style={{"color":"#fff", "borderColor":"#fff"}} > Parameters <FontAwesomeIcon icon={faListCheck}/></button>
+                <button className='dataset-toolbox-btn model-data-btn' style={{"color":"#fff", "borderColor":"#fff"}} disabled={ !trainedModel || trainedModel.length==0} onClick={()=>{}} > Statistics <FontAwesomeIcon icon={faSquarePollVertical}/></button>
             </div>
         </div>
         <div className='dataset-node-bottom'>

@@ -167,4 +167,16 @@
   .trash-icon-side:hover{
     cursor: pointer;
   }
+
+  .logs-notification-bullet{
+    top:100px;
+    position: fixed;
+    width: 15px;
+    height: 15px;
+    border-radius: 30px;
+    background-color: red;
+    z-index: 1001;
+    margin-left:45px;
+    
+  }
   

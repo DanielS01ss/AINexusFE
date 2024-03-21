@@ -178,3 +178,17 @@
     padding:10px;
     font-size: 2.7rem;
 }
+
+
+.model-training-no-params-text{
+    padding:10px;
+    font-size: 1.5rem;
+    font-weight: bold;   
+}
+
+.model-data-btn:disabled{
+    cursor: default;
+    border-color: gray !important;
+    color:gray !important;
+}
+

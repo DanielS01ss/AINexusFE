@@ -25,10 +25,6 @@ export default function AreYouSure(props) {
     props.handleClose();
   }
 
-  React.useEffect(()=>{
-  
-  },[ ])
-
   return (
     
     <ThemeProvider theme={darkTheme}>

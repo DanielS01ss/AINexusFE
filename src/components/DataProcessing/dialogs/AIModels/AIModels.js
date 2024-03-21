@@ -127,7 +127,7 @@ export default function AIModels (props) {
       },
     });
   
-    const allAlgorithms = ['Procedure name','Random Forest','SVM (Support Vector Machine)']
+    const allAlgorithms = ['Procedure name','Random Forest','SVM']
    
     const appliedMLModels = ()=>{
       
@@ -152,6 +152,7 @@ export default function AIModels (props) {
 
     const setModel = ()=>{
       dispatch(setSelectedModelType(checked[0]));
+    
       dispatch(setMLAlgorithmTarget({
         "model_name":checked[0],
         "target_column":checkedTargetedColumns[0]
@@ -197,9 +198,6 @@ export default function AIModels (props) {
       parseAndSetData(dataset)
     },[dataset])
 
-    useEffect(()=>{
-      console.log(selectMLAlgorithmsTarget);
-    },[selectMLAlgorithmsTarget])
 
     return(
         <div>

@@ -9,6 +9,7 @@ import PrivateRoutes from './components/PrivateRoutes/PrivateRoutes.js';
 import Error from './components/NotFound/NotFound.js';
 import MyModelsPage from './components/Models/MyModelsPage/MyModelsPage.js';
 import ModelDetails from './components/Models/ModelDetails/ModelDetails.js';
+import ModelStatistics from './components/DataProcessing/Model_statistics/ModelStatistics.js';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
                 <Route element={<DataProcessing/>} path="/pipelines"/>
                 <Route element={<MyModelsPage/>} path="/models" />
                 <Route element={<ModelDetails/>} path="/model-details" />
+                <Route element={<ModelStatistics/>} path="/model-statistics" />
             </Route>
             <Route element={<SignInSide/>} path="/login"/>
             <Route element={<SignUp/>} path="/signup"/>

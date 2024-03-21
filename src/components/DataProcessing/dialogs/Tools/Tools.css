@@ -1,0 +1,35 @@
+.options-page-title{
+    padding:"10px"
+}
+
+.options-page-container{
+    padding-top:20px;
+    padding-left:20px;
+    text-align: left;
+    width: 50%;
+}
+
+.options-page-btn{
+    margin-top:10px;
+}
+
+.options-page-container-title{
+    font-size: 1.4rem;
+}
+
+.options-page-container-item{
+    padding:10px;
+}
+
+.options-page-container-right-side{
+    float:right;
+    padding-top:20px;
+    padding-right:20px;
+    text-align: right;
+}
+
+.options-page-columns-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}

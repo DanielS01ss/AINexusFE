@@ -1,4 +1,5 @@
 import {createSlice, nanoid} from '@reduxjs/toolkit'
+import { act } from 'react-dom/test-utils';
 
 const initialState = {
     nodes:[],
@@ -13,7 +14,9 @@ const initialState = {
     constant_value_imputation_columns:[],
     constant_value_imputation_values:[],
     edges:[],
+    trainedModel:"",
     ml_algorithm_target:{},
+    ml_algorithm_parameters:{},
     is_training_started:false
 }
 
@@ -99,12 +102,18 @@ export const nodeSlice = createSlice({
         },
         setIsTrainingStarted:(state, action) =>{
             state.is_training_started = action.payload
+        },
+        setTrainedModel:(state, action)=>{
+            state.trainedModel = action.payload;
+        },
+        setMLAlgorithmParameters:(state, action)=>{
+            state.ml_algorithm_parameters = action.payload;
         }
          
     }
 });
 
 
-export const { setIsTrainingStarted, setMLAlgorithmTarget,setStoredConstantValueImputationValues, setConstantValueImputationColumns,setMappedNodes, setMappedEdges, resetSelectedModelType, resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete, clearDataset, removePreProcessingNodes} = nodeSlice.actions
+export const { setMLAlgorithmParameters, setTrainedModel, setIsTrainingStarted, setMLAlgorithmTarget,setStoredConstantValueImputationValues, setConstantValueImputationColumns,setMappedNodes, setMappedEdges, resetSelectedModelType, resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete, clearDataset, removePreProcessingNodes} = nodeSlice.actions
 
 export default nodeSlice.reducer;
