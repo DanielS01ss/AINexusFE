@@ -44,6 +44,8 @@ export default function Logs(props) {
 
     try{
         const resp = await axios.get(GET_PIPELINE_LOGS(email));  
+        const theLogs = resp.data.content;
+        theLogs.reverse();
         setPipelineLogs(resp.data.content);
         setIsLoading(false);
     } catch(err){

@@ -3,7 +3,7 @@ import { Handle, Position } from 'reactflow';
 import styles from "./Dataset.css";
 import { styled } from '@mui/material/styles';
 import { useSelector } from "react-redux/es/hooks/useSelector";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare, faBorderNone } from '@fortawesome/free-solid-svg-icons';
 import { faDivide } from '@fortawesome/free-solid-svg-icons';
 import Table from '@mui/material/Table';

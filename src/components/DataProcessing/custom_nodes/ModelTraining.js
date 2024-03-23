@@ -3,10 +3,9 @@ import { Handle, Position } from 'reactflow';
 import styles from "./Dataset.css";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { faDivide, faCircleNodes, faSquarePollVertical, faListCheck } from '@fortawesome/free-solid-svg-icons';
 import { faDiagramProject } from '@fortawesome/free-solid-svg-icons';
-import { faStopwatch } from '@fortawesome/free-solid-svg-icons';
+import toast, { Toaster } from 'react-hot-toast';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -30,6 +29,7 @@ export default memo(({ data, isConnectable }) => {
   const trainingStarted = useSelector((state)=> state.is_training_started);
   const modelParameters = useSelector((state)=>state.ml_algorithm_parameters);
   const trainedModel = useSelector((state)=> state.trainedModel);
+  const selectedModel = useSelector((state)=> state.selectedModelType);
   const [isTraining, setIsTraining] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
   const [hasModelParameters, setHasModelParameters] = useState(false);
@@ -40,6 +40,7 @@ export default memo(({ data, isConnectable }) => {
     createData('max_depth', 237),
     createData('min_samples_split', 262)
   ];
+
 
   const darkTheme = createTheme({
     palette: {
@@ -59,7 +60,7 @@ export default memo(({ data, isConnectable }) => {
 
   const navigateToStatistics = ()=>{
     if(trainedModel.length != 0){
-      navigate();
+      navigate(`/model-details?model_name=${trainedModel}`);
     }
     
   }
@@ -97,7 +98,7 @@ export default memo(({ data, isConnectable }) => {
         <p className='remove-node-btn-container' onClick={()=>{deleteNode()}} ><span className='remove-node-btn'>x</span></p>
         </div>
         <div className='dataset-node-info-section'>
-            <h3>  </h3>
+            <h3> {selectedModel} </h3>
             <hr/>
               <div className='training-card-body'>
                 {hasModelParameters && 
@@ -160,11 +161,11 @@ export default memo(({ data, isConnectable }) => {
             <hr/>
             <div className='dataset-node-bottom-toolbox'>
                 <button className='dataset-toolbox-btn model-data-btn' style={{"color":"#fff", "borderColor":"#fff"}} > Parameters <FontAwesomeIcon icon={faListCheck}/></button>
-                <button className='dataset-toolbox-btn model-data-btn' style={{"color":"#fff", "borderColor":"#fff"}} disabled={ !trainedModel || trainedModel.length==0} onClick={()=>{}} > Statistics <FontAwesomeIcon icon={faSquarePollVertical}/></button>
+                <button className='dataset-toolbox-btn model-data-btn' style={{"color":"#fff", "borderColor":"#fff"}} onClick={()=>{navigateToStatistics()}} disabled={ !trainedModel || trainedModel.length==0} > Statistics <FontAwesomeIcon icon={faSquarePollVertical}/></button>
             </div>
         </div>
         <div className='dataset-node-bottom'>
-        
+    
         </div>
       </div>
    

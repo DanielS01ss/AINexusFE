@@ -11,3 +11,4 @@ export const GET_PIPELINE_LOGS = (email) =>  `http://localhost:8081/logs?email=$
 export const DELETE_PIPELINE = (email) => `http://localhost:8081/logs?email=${email}`;
 export const GET_PIPELINE_SUMMARY_PLOT = (model_name)=> `http://localhost:8081/model/summary_plot?model_name=${model_name}`;
 export const GET_PIPELINE_FORCE_PLOT = (model_name)=> `http://localhost:8081/model/force_plot?model_name=${model_name}`;
+export const SAVE_PIPELINE = `http://localhost:8081/save/pipeline`;

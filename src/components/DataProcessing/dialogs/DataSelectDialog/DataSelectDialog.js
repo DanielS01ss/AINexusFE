@@ -262,15 +262,15 @@ export default function DataSelectDialog(props) {
                  </List>
               }
 
-              {
+              { 
                 !dataSetSearch &&
                 <DataSetInfo handleDisplayDataSetInfo={handleDisplayDataSetInfo} selectedDatasetId={selectedDatasetId} selectedDatasetName={selectedDatasetName}/>
               }
 
               {isDataLoading && 
-               <div class="spinner-container">
-                  <div class="spinner"></div>
-              </div>
+                <div class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
               }
 
             </DialogContent>

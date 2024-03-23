@@ -10,6 +10,7 @@ import Error from './components/NotFound/NotFound.js';
 import MyModelsPage from './components/Models/MyModelsPage/MyModelsPage.js';
 import ModelDetails from './components/Models/ModelDetails/ModelDetails.js';
 import ModelStatistics from './components/DataProcessing/Model_statistics/ModelStatistics.js';
+import SavedPipelines from './components/DataProcessing/SavedPipelines/SavedPipelines.js';
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
                 <Route element={<MyModelsPage/>} path="/models" />
                 <Route element={<ModelDetails/>} path="/model-details" />
                 <Route element={<ModelStatistics/>} path="/model-statistics" />
+                <Route element={<SavedPipelines/>} path="/saved-pipelines"/>
             </Route>
             <Route element={<SignInSide/>} path="/login"/>
             <Route element={<SignUp/>} path="/signup"/>

@@ -142,7 +142,7 @@ export default function MiniDrawer() {
   const handleDisplayMLModels = () =>{
     setDisplayMLModels(false);
   }
-
+ 
   const handleOpenMLModels = ()=>{
     if(isDatasetSelected){
       setDisplayMLModels(true);
@@ -309,7 +309,7 @@ export default function MiniDrawer() {
                   <ListItemText primary={"My Models"} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
             </ListItem>
-            <ListItem key={"Saved Pipelines"} disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/models")}}>
+            <ListItem key={"Saved Pipelines"} disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/saved-pipelines")}}>
               <ListItemButton
                   sx={{
                     minHeight: 48,

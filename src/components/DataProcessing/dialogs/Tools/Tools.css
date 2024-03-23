@@ -33,3 +33,45 @@
     flex-direction: row;
     justify-content: space-between;
 }
+
+.options-page-info-section{
+    padding:10px;
+    font-size: 1.3rem;
+}
+
+.options-page-info-section-title{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.options-page-info-section-icon{
+    /* padding-right: 20px;    */
+}
+
+.options-page-name-container{
+    width: 300px;
+    margin-top:10px;
+    text-align: center;
+    padding:2px;
+    font-size: 1.1rem;
+    background-color: #282142;
+    border-radius: 5px;
+}
+
+.options-page-info-section-title-item{
+    padding-top:10px;
+    text-align: center;
+}
+
+.copy-icon{   
+    float:right;
+    padding-top:2px;
+    margin-left:6%;
+}
+
+.options-page-no-name{
+    font-size: 1.1rem;
+    color:gray;
+    font-style: italic;
+}
