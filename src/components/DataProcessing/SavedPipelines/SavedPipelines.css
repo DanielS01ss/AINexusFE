@@ -1,0 +1,13 @@
+.saved-pipelines-card-title{
+    text-align: center;
+    margin-right: 40%;
+    font-size: 1.9rem;
+    font-weight: bold;
+    padding-top:80px;
+}
+
+.saved-pipeline-details-container{
+    font-size: 1.5rem;
+    float:left;
+    padding:10px;
+}

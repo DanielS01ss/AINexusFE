@@ -23,6 +23,7 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
+import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 import style from "./ModelDetails.css";
 import axios from "axios";
 
@@ -109,6 +110,7 @@ const ModelDetails = ()=>{
     const [rowsPerPageParameters, setRowsPerPageParameters] = React.useState(5);
     const [rowsPerPageMetrics, setRowsPerPageMetrics] = React.useState(5);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [noModelFound, setNoModelFound] = React.useState(false);
 
     const darkTheme = createTheme({
         palette: {
@@ -180,6 +182,10 @@ const ModelDetails = ()=>{
             parseParametricsAndMetrics(model_details);
             setIsLoading(false);
         } catch(err){
+          setIsLoading(false);
+          if(err && err.response && err.response.status && err.response.status == 404 ){
+            setNoModelFound(true);
+          }
             console.log(err);
         }
     }
@@ -204,11 +210,26 @@ const ModelDetails = ()=>{
               
                     <h2>Model Details</h2>
                     <div className="model-info-card-body">
+                  { 
+                      !noModelFound &&
+                      <>
                         <p><span className="model-info-card-model-name">Model Name:</span> <span>{modelName}</span></p>     
                         <p><span className="model-info-card-model-name">Date:</span> <span>18/09/2023</span></p>
+                      </>   
+                  }
+                 
                     </div>    
                     <Divider/>
-                    <div className="model-info-card-sections-container">
+                    {
+                      noModelFound &&
+                      <div>
+                        <div className="no-model-title"> There was no model found! </div>
+                        <FontAwesomeIcon icon={faBoxOpen} className="no-model-icon"/>
+                      </div>
+                    }
+                    {
+                      !noModelFound &&
+                      <div className="model-info-card-sections-container">
                         <div className="model-info-card-parameters-section">
                             <p>Parameters</p>
 
@@ -221,7 +242,7 @@ const ModelDetails = ()=>{
                         </div>
                       }        
                       {
-                        !isLoading &&
+                        !isLoading &&  
                         <ThemeProvider theme={darkTheme}>
                             <TableContainer component={Paper}>
                                 <Table sx={{ minWidth: 1000 }} aria-label="custom pagination table">
@@ -343,7 +364,9 @@ const ModelDetails = ()=>{
                         </div>
 
 
-                    </div>                    
+                    </div>       
+                    }
+                                 
                 </div>
             </div>
         </div>

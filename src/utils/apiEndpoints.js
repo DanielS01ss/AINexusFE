@@ -8,7 +8,10 @@ export const GET_MODELS_FOR_USER = (email)=>`http://localhost:8081/models?email=
 export const GET_MODEL_DETAILS = (model_name)=>`http://localhost:8081/model/details?model_name=${model_name}`;
 export const POST_PIPELINE_LOGS = `http://localhost:8081/logs`;
 export const GET_PIPELINE_LOGS = (email) =>  `http://localhost:8081/logs?email=${email}`;
-export const DELETE_PIPELINE = (email) => `http://localhost:8081/logs?email=${email}`;
+export const DELETE_LOGS = (email) => `http://localhost:8081/logs?email=${email}`;
 export const GET_PIPELINE_SUMMARY_PLOT = (model_name)=> `http://localhost:8081/model/summary_plot?model_name=${model_name}`;
 export const GET_PIPELINE_FORCE_PLOT = (model_name)=> `http://localhost:8081/model/force_plot?model_name=${model_name}`;
 export const SAVE_PIPELINE = `http://localhost:8081/save/pipeline`;
+export const GET_SAVED_PIPELINES = (email_name)=>`http://localhost:8081/saved-pipelines?user_email=${email_name}`;
+export const DELETE_PIPELINE = (pipeline_name) => `http://localhost:8081/pipeline?pipeline_name=${pipeline_name}`;
+export const DELETE_MODEL = (model_name) => `http://localhost:8081/model?model_name=${model_name}`;

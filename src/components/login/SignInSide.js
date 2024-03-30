@@ -18,7 +18,7 @@ import { AUTHENTICATION_LOGIN } from '../../utils/apiEndpoints';
 import { saveToken, saveRefreshToken } from '../../utils/saveTokens';
 import Alert from '@mui/material/Alert';
 import { jwtDecode } from "jwt-decode";
-import Stack from '@mui/material/Stack';
+import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -75,6 +75,13 @@ export default function SignIn() {
     }
   }
 
+  const blockAlert = (msg)=>{
+    toast.error(msg,{
+      duration:2000,
+      position:'top-right',
+    })
+  };
+
   const authenticationRequest = async(auth_obj)=>{
     let response;
     try{
@@ -89,16 +96,28 @@ export default function SignIn() {
         handleClick();
       },2000)
     } catch(err){
-      console.log(err);
+      
+      
       if(err && err.response && err.response.status == 403){
         setUnsuccessfulSubmit(true);
         setIsEmailValid(false);
         setIsPasswordValid(false);
+      
         setAlertErrorMessage("Wrong credentials")
         setTimeout(()=>{
           toggleAlert("error");
         },500)
+        return;
+      } else {
+        
+        setAlertErrorMessage("There was an error! Please try again later");
+      setTimeout(()=>{
+        toggleAlert("error");
+      },500)
+      
       }
+     
+      
     }
   }
 
@@ -139,6 +158,7 @@ export default function SignIn() {
     }
   }
 
+  
 
   useEffect(()=>{
     if(isEmailValid && isPasswordValid){
@@ -215,7 +235,7 @@ export default function SignIn() {
             />
             {alertError &&
                <Alert variant="filled" severity="error" style={{ position: 'absolute', top: 10, right: 10, width:"300px", fontSize:"1.1rem" }}>
-               Wrong credentials!
+               {alertErrorMessage}
                </Alert>
             }
             {

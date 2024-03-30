@@ -18,7 +18,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import AreYouSure from "../../dialogs/AreYouSure/AreYouSure";
 import axios from "axios";
-import { GET_PIPELINE_LOGS, DELETE_PIPELINE } from '../../../../utils/apiEndpoints';
+import { GET_PIPELINE_LOGS, DELETE_LOGS } from '../../../../utils/apiEndpoints';
 import {getToken} from "../../../../utils/getTokens";
 import { Divider } from '@mui/material';
 import { jwtDecode } from "jwt-decode";
@@ -86,9 +86,7 @@ export default function Logs(props) {
     const email = JSON.parse(jwtDecode(token).sub).email;
 
     try{
-      const resp = axios.delete(DELETE_PIPELINE(email));
-      console.log("the response from clear runs!");
-      console.log(resp);
+      const resp = axios.delete(DELETE_LOGS(email));
       setPipelineLogs([]);
     } catch(err){
         console.log(err);

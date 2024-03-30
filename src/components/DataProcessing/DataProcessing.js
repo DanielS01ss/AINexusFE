@@ -141,7 +141,8 @@ function DataProcessing() {
       operations:[...operationsList],
       email: email
     }
-    
+    console.log("requestObject:");
+    console.log(requestObject);
   
     dispatch(setIsTrainingStarted(true));
     try{
@@ -187,7 +188,7 @@ function DataProcessing() {
   const startPipelineAndMakeRequests = ()=>{
       
     setPipelineFailed(false);
-
+    
       const isDatasetBlock = pipelineNodes.find(nd => nd.id === "node-1");
       if(!isDatasetBlock){
         blockAlert("The pipeline does not meet the requirements!");
@@ -201,6 +202,7 @@ function DataProcessing() {
         blockAlert("The pipeline does not meet the requirements!");
         return;
       }
+      setActiveSteps([0]) 
       setIsPipelineStarted(true);
       const orderOfOperations = []; 
       let resultSearch = 'node-1';
@@ -289,7 +291,7 @@ function DataProcessing() {
     dispatch(setMappedEdges([]));
     dispatch(setMLAlgorithmTarget({}));
   }
-
+ 
 
   useEffect(()=>{
     
@@ -317,7 +319,7 @@ function DataProcessing() {
                 </div>
                  : 
               <div className="pipeline-controller">
-                 <p className="play-btn" onClick={()=>{  setTimeout(()=>{ setActiveSteps([0]) ;startPipelineAndMakeRequests()},500) }}><FontAwesomeIcon icon={faCirclePlay} /></p>
+                 <p className="play-btn" onClick={()=>{  setTimeout(()=>{ startPipelineAndMakeRequests()},500) }}><FontAwesomeIcon icon={faCirclePlay} /></p>
                  <p>Start Pipeline</p>
                </div>
                }     

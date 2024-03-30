@@ -25,6 +25,7 @@ import WidgetsIcon from '@mui/icons-material/Widgets';
 import DataSelectDialog from './dialogs/DataSelectDialog/DataSelectDialog';
 import PreProcessingAlgDialog from './dialogs/PreProcessingAlgDialog/PreProcessingAlgDialog';
 import LogoutIcon from '@mui/icons-material/Logout';
+import SnippetFolderIcon from '@mui/icons-material/SnippetFolder';
 import AIModels from './dialogs/AIModels/AIModels';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSelector } from "react-redux/es/hooks/useSelector";
@@ -332,7 +333,7 @@ export default function MiniDrawer() {
                   <ListItemText primary={"Saved Pipelines"} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
             </ListItem>
-            <ListItem key={"Generate pipelines"} disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/models")}}>
+            <ListItem key={"Generate pipelines"} disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/generate-pipeline")}}>
               <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -353,6 +354,29 @@ export default function MiniDrawer() {
                    <TipsAndUpdatesIcon/>
                   </ListItemIcon>
                   <ListItemText primary={"Generate pipelines"} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+            </ListItem>
+            <ListItem key={"Manage Datasets"} disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/")}}>
+              <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                    color:"white"
+                  }}
+                  key={4}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                      color:"white"
+                    }}
+                  >
+                   <SnippetFolderIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={"Manage Datasets"} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
             </ListItem>
         </List>

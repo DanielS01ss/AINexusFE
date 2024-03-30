@@ -277,7 +277,6 @@ function Flow() {
     if(firstRender == true){
       setFirstRender(false);
        setEdges(storedEdges);
-       console.log(storedEdges);
     }
   },[storedEdges])
 

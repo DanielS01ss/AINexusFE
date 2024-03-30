@@ -11,6 +11,7 @@ import MyModelsPage from './components/Models/MyModelsPage/MyModelsPage.js';
 import ModelDetails from './components/Models/ModelDetails/ModelDetails.js';
 import ModelStatistics from './components/DataProcessing/Model_statistics/ModelStatistics.js';
 import SavedPipelines from './components/DataProcessing/SavedPipelines/SavedPipelines.js';
+import GeneratePipelines from './components/DataProcessing/GeneratePipeline/GeneratePipelines.js';
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
                 <Route element={<ModelDetails/>} path="/model-details" />
                 <Route element={<ModelStatistics/>} path="/model-statistics" />
                 <Route element={<SavedPipelines/>} path="/saved-pipelines"/>
+                <Route element={<GeneratePipelines/>} path="/generate-pipeline" />
             </Route>
             <Route element={<SignInSide/>} path="/login"/>
             <Route element={<SignUp/>} path="/signup"/>

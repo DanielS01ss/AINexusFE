@@ -5,20 +5,42 @@ import { faCircleLeft, faCubes, faCompass } from '@fortawesome/free-solid-svg-ic
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
 import toast, { Toaster } from 'react-hot-toast';
 import { jwtDecode } from "jwt-decode";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import InputBase from '@mui/material/InputBase';
+import Divider from '@mui/material/Divider';
+import SearchIcon from '@mui/icons-material/Search';
+import AreYouSure from "../../DataProcessing/dialogs/AreYouSure/AreYouSure";
 import style from "./MyModelsPage.css";
+import {DELETE_MODEL} from "../../../utils/apiEndpoints";
+import { useDispatch, useSelector } from "react-redux";
+import { setTrainedModel } from "../../../reducers/nodeSlice";
+import axios from "axios";
 
 const MyModelsPage = ()=>{
 
 
+    const trainedModel = useSelector((state)=> state.trainedModel);
     const [allModels, setAllModels] = useState([]);
+    const [filteredModels, setFilteredModels] = useState([]);
     const [loading, setIsLoading] = useState(true);
     const [selectedModel, setSelectedModel] = useState("");
+    const [modelToDelete, setModelToDelete] = useState("");
+    const [isAreYouSureOpen, setIsAreYouSureOpen] = useState(false);
+    const dispatch = useDispatch();
+
     const navigate = useNavigate();
 
-    
+    const darkTheme = createTheme({
+        palette: {
+          mode: 'dark',
+        },
+    });
+  
     const blockAlert = (msg)=>{
         toast.error(msg,{
           duration:2000,
@@ -32,6 +54,7 @@ const MyModelsPage = ()=>{
             modelList.push(model[1]);
         }
         setAllModels(modelList);
+        setFilteredModels(modelList);
     }
 
     const makeRequestsForUser = async()=>{
@@ -52,6 +75,65 @@ const MyModelsPage = ()=>{
         }
     }
 
+    const searchListByModelName = (list, str)=> {
+    
+        const filteredList = list.filter(item => {
+          const searchStr = str.toLowerCase();
+          const datasetName = item.toLowerCase();
+      
+          return datasetName.includes(searchStr);
+        });
+      
+        return filteredList;
+      }
+
+      const blockSuccess = (msg)=>{
+        toast.success(msg,{
+          duration:2000,
+          position:'top-right',
+        })
+      }
+  
+      const updateSearch = (evt)=>{
+        const updatedModels = searchListByModelName(allModels,evt.target.value);
+        setFilteredModels(updatedModels);
+      }
+
+      const deleteModelFromFrontEnd = (to_delete)=>{
+        const updatedModels = [];
+        for(const model of allModels){
+            console.log("model:");
+            console.log(model);
+            console.log("to_delete:");
+            console.log(to_delete);
+            if(model == to_delete){
+                continue;
+            } else {
+                updatedModels.push(model);
+            }
+        }
+        
+        setAllModels(updatedModels);
+        setFilteredModels(updatedModels);
+      }
+
+      const deleteTheModel = async()=>{
+
+        if(modelToDelete == trainedModel){
+            dispatch(setTrainedModel(""));
+        }
+        try{
+            
+            const resp = await axios.delete(DELETE_MODEL(modelToDelete));
+            deleteModelFromFrontEnd(modelToDelete);
+            blockSuccess("The model was successfully deleted!");
+        } catch(err){
+            blockAlert("There was a problem while deleting the model");
+            console.log(err);
+        }
+      }
+
+
     useEffect(()=>{
         makeRequestsForUser();
     },[])
@@ -70,29 +152,56 @@ const MyModelsPage = ()=>{
                 <p>There are no models trained!</p>
              </div>
         </div>
-        }
-        {allModels.length !== 0 && !loading && 
-        <div className="cards-container">
-            {
-                allModels.map((model)=>{
+        } 
+       
+       
 
-                    return(
-                        <div className="card" key={model}>
-                        <div className="card-header">
-                            <FontAwesomeIcon icon={faCubes} className="card-icon" />
-                            <div className="card-header-model-info">{model}</div>
-                        </div>
-                        <div className="card-model-footer">
-                            <Button variant="contained" onClick={()=>{navigate(`/model-details?model_name=${model}`)}}>More Info</Button>
-                            <Button variant="contained"  style={{ backgroundColor: 'green', color: 'white' }}>Predict</Button>
-                            <Button variant="contained" style={{ backgroundColor: 'red', color: 'white' }}>Delete</Button>
-                        </div>
-                    </div>    
-                    )
-                })
-            }
-           
-        </div>
+        {allModels.length !== 0 && !loading && 
+        <>  
+        <ThemeProvider theme={darkTheme}>
+                <Paper
+                        component="form"
+                        onSubmit={(evt)=>{evt.preventDefault()}}
+                        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: "90%", margin:"auto" }}
+                    >
+                        <IconButton sx={{ p: '10px' }} aria-label="menu">
+                        <MenuIcon />
+                        </IconButton>
+                        <InputBase
+                        sx={{ ml: 1, flex: 1 }}
+                        placeholder="Search Model"
+                        inputProps={{ 'aria-label': 'search google maps' }}
+                        onChange={(evt)=>{updateSearch(evt)}}
+                        
+                        />
+                        <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+                        <IconButton onClick={()=>{}} type="button" sx={{ p: '10px' }} aria-label="search">
+                        <SearchIcon />
+                        </IconButton> 
+                </Paper>
+            </ThemeProvider>
+            <div className="cards-container">
+                {
+                    filteredModels.map((model)=>{
+
+                        return(
+                            <div className="card" key={model}>
+                            <div className="card-header">
+                                <FontAwesomeIcon icon={faCubes} className="card-icon" />
+                                <div className="card-header-model-info">{model}</div>
+                            </div>
+                            <div className="card-model-footer">
+                                <Button variant="contained" onClick={()=>{navigate(`/model-details?model_name=${model}`)}}>More Info</Button>
+                                <Button variant="contained"  style={{ backgroundColor: 'green', color: 'white' }}>Predict</Button>
+                                <Button variant="contained" style={{ backgroundColor: 'red', color: 'white' }} onClick={()=>{setModelToDelete(model); setIsAreYouSureOpen(true);}}>Delete</Button>
+                            </div>
+                        </div>    
+                        )
+                    })
+                }
+            
+            </div>
+        </>
         }
         {
          loading && 
@@ -105,6 +214,7 @@ const MyModelsPage = ()=>{
              </div>
          </div>
         }
+        {isAreYouSureOpen && <AreYouSure yesAction={()=>{deleteTheModel()}} noAction={()=>{}} handleClose={()=>{setIsAreYouSureOpen(false)}} open={isAreYouSureOpen} dialogTitle={"Delete Model"} dialogMessage={`Are you sure you want to delete ${modelToDelete}?`} />}
         <Toaster/>
     </div>
     )

@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import toast, { Toaster } from 'react-hot-toast';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -50,6 +51,15 @@ export default function SignUp() {
         navigate('/login');
   };
 
+
+  const blockAlert = (msg)=>{
+    toast.error(msg,{
+      duration:2000,
+      position:'top-right',
+    })
+  };
+
+
   const registerRequest = async(auth_obj)=>{
     let response;
     try{
@@ -60,6 +70,8 @@ export default function SignUp() {
       if(err && err.response && err.response.status == 403){
         setIsEmailValid(false);
         setIsPasswordValid(false);
+      } else {
+
       }
     }
   }
@@ -175,7 +187,7 @@ export default function SignUp() {
                   id="repeat-password"
                   autoComplete="repeat-password"
                   onChange={(evt)=>{repeatPasswordChange(evt)}}
-                />
+                /> 
               </Grid>
               { !isPasswordFirstTry && !doPasswordsMatch && ( 
               <div style={{ color: 'red',marginLeft:"120px", fontSize: '16px', marginTop: '5px' }}>
@@ -202,6 +214,7 @@ export default function SignUp() {
           </Box>
         </Box>
         <Copyright sx={{ mt: 5 }} />
+        <Toaster/>
       </Container>
     </ThemeProvider>
   );

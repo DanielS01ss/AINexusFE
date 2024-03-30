@@ -183,8 +183,8 @@ export default function DataSetInfo (props){
                       />
                   </Paper>
                   <div className="dataset-info-toolbox">
-                    {backBtnDisplayed && <Button variant="contained" sx={{marginTop:"40px"}}>Select this dataset</Button>}  
-                    {backBtnDisplayed && <Button variant="contained" sx={{marginTop:"40px"}}>Donwload CSV</Button>}  
+                    {/* {backBtnDisplayed && <Button variant="contained" sx={{marginTop:"40px"}}>Select this dataset</Button>}  
+                    {backBtnDisplayed && <Button variant="contained" sx={{marginTop:"40px"}}>Donwload CSV</Button>}   */}
                       
                   </div>
               </div>
