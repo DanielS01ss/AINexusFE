@@ -8,7 +8,7 @@ import { useTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleLeft} from '@fortawesome/free-solid-svg-icons';
+import { faCircleLeft, faCaretRight} from '@fortawesome/free-solid-svg-icons';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -98,6 +98,9 @@ function TablePaginationActions(props) {
 
 const ModelDetails = ()=>{
     const navigate = useNavigate();
+    const [modelDate, setModelDate] = useState("");
+    const [predictInfoOpen, setPredictInfoOpen] = useState(false);
+    const [allColumnsList, setAllColumnsList] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams();
     const [modelName, setModelName] = useState("");
     const [allParametersNames, setAllParameterNames] = useState([]);
@@ -143,9 +146,11 @@ const ModelDetails = ()=>{
     };
 
     const parseParametricsAndMetrics = async(model_data)=>{
+      
         const parameters = model_data["parameters"];
         const metrics = model_data["metrics"];
-    
+        const modelDateInfo = model_data["date"];
+        const allColumns = model_data["columns_used"];
 
         const parametersNames = [];
         const parametersValues = [];
@@ -166,7 +171,8 @@ const ModelDetails = ()=>{
                 metricsValues.push(value);
             }
         }
-
+        setAllColumnsList(allColumns);
+        setModelDate(modelDateInfo);
         setAllParameterNames(parametersNames);
         setAllParametersValues(parametersValues);
         setAllMetricsValues(metricsValues);
@@ -179,6 +185,7 @@ const ModelDetails = ()=>{
         try{
             const resp = await axios.get(GET_MODEL_DETAILS(model_name));
             const model_details = JSON.parse(resp.data.content.content);
+            
             parseParametricsAndMetrics(model_details);
             setIsLoading(false);
         } catch(err){
@@ -214,7 +221,7 @@ const ModelDetails = ()=>{
                       !noModelFound &&
                       <>
                         <p><span className="model-info-card-model-name">Model Name:</span> <span>{modelName}</span></p>     
-                        <p><span className="model-info-card-model-name">Date:</span> <span>18/09/2023</span></p>
+                        <p><span className="model-info-card-model-name">Date:</span> <span>{modelDate}</span></p>
                       </>   
                   }
                  
@@ -359,14 +366,25 @@ const ModelDetails = ()=>{
                                 </TableContainer>
                         </ThemeProvider>
                       }
-                       
                           
-                        </div>
-
-
+                      </div>
+                     
+                      
                     </div>       
                     }
-                                 
+
+                
+                    <div className="list-container">
+                      <div className="list-container-title">Columns used</div>
+                      {allColumnsList.map((item)=>{
+
+                        return <div className="list-item"> <FontAwesomeIcon icon={faCaretRight}/> {item} </div>
+                      })}
+                      
+                      
+                    </div>
+                    <Divider sx={{"padding":"10px", "marginBottom":"80px"}}/>      
+                     
                 </div>
             </div>
         </div>

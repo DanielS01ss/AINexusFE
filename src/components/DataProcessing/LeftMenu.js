@@ -189,7 +189,7 @@ export default function MiniDrawer() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-          AI Nexus
+          AI Flow Forge
           </Typography>
         
           <div style={{ flex: 1 }} />
@@ -356,7 +356,7 @@ export default function MiniDrawer() {
                   <ListItemText primary={"Generate pipelines"} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
             </ListItem>
-            <ListItem key={"Manage Datasets"} disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/")}}>
+            <ListItem key={"Manage Datasets"} disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/dataset-manager")}}>
               <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -364,7 +364,7 @@ export default function MiniDrawer() {
                     px: 2.5,
                     color:"white"
                   }}
-                  key={4}
+                  key={4} 
                 >
                   <ListItemIcon
                     sx={{

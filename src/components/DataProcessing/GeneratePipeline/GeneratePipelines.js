@@ -34,6 +34,8 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import { getToken } from "../../../utils/getTokens";
+import { getCurrentTimestamp } from "../../../utils/getCurrentTimestamp";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import AILogo from "../../../assets/images/DALL·E 2024-03-23 18.03.15 - Create an image illustrating the concept of automatic generation of AI pipelines, symbolized by blocks similar to those in V.webp";
 import LoadingPipeline from "../../../assets/images/pipeline-generating.gif";
@@ -152,10 +154,13 @@ const GeneratePipelines = ()=>{
 
   
   const fetchAllData = () =>{
-    
-    axios.get(DATASET_FETCH_ALL_DATASETS).then((resp)=>{
+    const token = getToken();
+    const theCurrentDate = getCurrentTimestamp();
+    const email = JSON.parse(jwtDecode(token).sub).email;
+
+    axios.get(DATASET_FETCH_ALL_DATASETS()).then((resp)=>{
       const fetchedData = resp.data;
-      setFilteredDatasets(resp.data);
+      setFilteredDatasets(resp.data); 
       setDataSets(fetchedData);
       setDatasetSearch(fetchedData);
       restoreChecksBasedOnStoredData(fetchedData);

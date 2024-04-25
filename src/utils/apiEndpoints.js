@@ -1,4 +1,4 @@
-export const DATASET_FETCH_ALL_DATASETS = "http://localhost:8089/api/dataset/all-datasets";
+export const DATASET_FETCH_ALL_DATASETS = (email="")=>`http://localhost:8089/api/dataset/all-datasets?email=${email}`;
 export const DATASET_FETCH_DATASET_INFO = (id)=>`http://localhost:8089/api/dataset/dataset-info?id=${id}`;
 export const DATASET_FETCH_DATASET_SNIPPET = (id)=>`http://localhost:8089/api/dataset/fetch-snippet?id=${id}`;
 export const START_PIPELINE = `http://localhost:8081/start_pipeline`;
@@ -15,3 +15,7 @@ export const SAVE_PIPELINE = `http://localhost:8081/save/pipeline`;
 export const GET_SAVED_PIPELINES = (email_name)=>`http://localhost:8081/saved-pipelines?user_email=${email_name}`;
 export const DELETE_PIPELINE = (pipeline_name) => `http://localhost:8081/pipeline?pipeline_name=${pipeline_name}`;
 export const DELETE_MODEL = (model_name) => `http://localhost:8081/model?model_name=${model_name}`;
+export const UPLOAD_FILE = `http://localhost:8081/uploadfile`;
+export const FILE_METADATA =  `http://localhost:8081/uploadmetadata`;
+export const DELETE_DATASET = (id)=>`http://localhost:8081/dataset?id=${id}`;
+export const COLUMNS_FOR_ENCODING = (dataset_name) => `http://localhost:8081/columns-for-encoding?dataset_name=${dataset_name}`;

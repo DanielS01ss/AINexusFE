@@ -1,0 +1,19 @@
+.model-name-predict-dialog-title{
+ font-weight: bold;
+ font-size: 1.4rem;
+}
+
+.predict-dialog-informative-message{
+    padding-top:10px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.predict-dialog-body-example{
+    border-radius: 5px;
+    width: 900px;
+    padding:10px;
+    /* height: 800px; */
+    background-color: #282142;
+    
+}

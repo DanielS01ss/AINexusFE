@@ -41,6 +41,13 @@ function DataProcessing() {
   const standardizationColumns = useSelector((state)=> state.standardizationColumns);
   const imputationAlgs = useSelector((state)=> state.imputationAlgs);
   const storedMLAlgorithmTarget = useSelector((state)=>state.ml_algorithm_target);
+  const outlier_removal_columns = useSelector((state)=> state.outlier_removal_columns);
+  const log_transformation_columns = useSelector((state)=> state.log_transformation_columns);
+  const feature_encoding_columns = useSelector((state)=> state.feature_encoding_columns);
+  const label_encoding_columns = useSelector((state)=> state.label_encoding_columns);
+  const target_encoding_columns = useSelector((state)=> state.target_encoding_columns);
+  const one_hot_encoding_columns = useSelector((state)=> state.one_hot_encoding_columns);
+  const ml_algorithm_target = useSelector((state)=> state.ml_algorithm_target);
   const [currentDate, setCurrentDate] = useState("");
   const [isPipelineStarted, setIsPipelineStarted] = useState(false);
   const [displayPipelineSteps, setDisplayPipelineSteps] = useState(false);
@@ -54,7 +61,7 @@ function DataProcessing() {
   const steps = ['Start', 'Pipeline steps', 'Finish'];
   const [activeSteps, setActiveSteps] = useState([]);
   const dispatch = useDispatch();
-
+ 
   const isStepFailed = (step) => {
     if(pipelineFailed){
       return step === 1;
@@ -141,12 +148,14 @@ function DataProcessing() {
       operations:[...operationsList],
       email: email
     }
-    console.log("requestObject:");
-    console.log(requestObject);
+
+     console.log("Request Object:");
+     console.log(requestObject);
   
     dispatch(setIsTrainingStarted(true));
     try{
       const resp = await axios.post(START_PIPELINE, requestObject);
+      console.log(resp.data);
       getCurrentTrainedModel(resp.data);
       savePipelineLogs(resp.data);
       setHasNotification(true);
@@ -267,14 +276,57 @@ function DataProcessing() {
               target:storedMLAlgorithmTarget.target_column.column_name
             }
             operationsList.push(operationObj);
+        } else if (operation == "node-6"){
+          operationObj = {
+            operation_name:"Outlier Removal",
+            columns: outlier_removal_columns
+          }
+          operationsList.push(operationObj);
+        } else if (operation == "node-7"){
+          operationObj = {
+            operation_name:"Log Transformation",
+            columns: log_transformation_columns
+          }
+          operationsList.push(operationObj);
+        }  else if (operation == "node-8"){
+
+          if(label_encoding_columns.length!=0){
+             operationObj = {
+              operation_name:"Feature Encoding",
+              encoding_type: "Label Encoding",
+              target_column: "",
+              columns: label_encoding_columns
+            }
+            operationsList.push(operationObj);
+          }
+          if(target_encoding_columns.length!=0){
+             operationObj = {
+              operation_name:"Feature Encoding",
+              encoding_type: "Target Encoding",
+              target_column: ml_algorithm_target["target_column"]["column_name"],
+              columns: target_encoding_columns
+            }
+            operationsList.push(operationObj);
+          }
+          if(one_hot_encoding_columns.length!=0){
+            operationObj = {
+              operation_name:"Feature Encoding",
+              encoding_type: "One Hot Encoding",
+              target_column: "",
+              columns: one_hot_encoding_columns
+            }
+            operationsList.push(operationObj);
+          }
+        
         }
+        
       }
       setTimeout(()=>{
         setActiveSteps([0,1]);
       },300)
 
       makeRequestForPipeline(operationsList);
-  }
+  } 
 
   const handleDeletePipeline = ()=>{
     dispatch(setNodes([]));
@@ -290,6 +342,23 @@ function DataProcessing() {
     dispatch(setEdgeToDelete(""));
     dispatch(setMappedEdges([]));
     dispatch(setMLAlgorithmTarget({}));
+
+    setTimeout(()=>{
+      dispatch(setMappedEdges([]));
+      dispatch(setNodes([]));
+      dispatch(clearDataset());
+      dispatch(resetSelectedModelType());
+      dispatch(removeDataFeaturingColumns());
+      dispatch(setNormalizationColumns([]));    
+      dispatch(setStandardizationColumns([]));
+      dispatch(setImputationAlgs([]));
+      dispatch(setMappedNodes([]));
+      dispatch(setConstantValueImputationColumns([]));
+      dispatch(setStoredConstantValueImputationValues([]));
+      dispatch(setEdgeToDelete(""));
+      dispatch(setMappedEdges([]));
+      dispatch(setMLAlgorithmTarget({}));
+    },500)
   }
  
 
@@ -304,6 +373,11 @@ function DataProcessing() {
     }   
 
   },[nodes])
+
+  useEffect(()=>{
+    console.log("ml_algorithm_target:");
+    console.log(ml_algorithm_target);
+  },[ml_algorithm_target])
 
  
     return (

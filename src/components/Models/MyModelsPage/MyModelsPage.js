@@ -15,6 +15,7 @@ import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import SearchIcon from '@mui/icons-material/Search';
 import AreYouSure from "../../DataProcessing/dialogs/AreYouSure/AreYouSure";
+import PredictInfoDialog from "../../DataProcessing/dialogs/PredictInfoDialog/PredictInfoDialog";
 import style from "./MyModelsPage.css";
 import {DELETE_MODEL} from "../../../utils/apiEndpoints";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +26,8 @@ const MyModelsPage = ()=>{
 
 
     const trainedModel = useSelector((state)=> state.trainedModel);
+    const [modelSelectPredict, setModelSelectPredict] = useState("");
+    const [predictInfoOpen, setPredictInfoOpen] = useState(false);
     const [allModels, setAllModels] = useState([]);
     const [filteredModels, setFilteredModels] = useState([]);
     const [loading, setIsLoading] = useState(true);
@@ -102,10 +105,7 @@ const MyModelsPage = ()=>{
       const deleteModelFromFrontEnd = (to_delete)=>{
         const updatedModels = [];
         for(const model of allModels){
-            console.log("model:");
-            console.log(model);
-            console.log("to_delete:");
-            console.log(to_delete);
+            
             if(model == to_delete){
                 continue;
             } else {
@@ -192,7 +192,7 @@ const MyModelsPage = ()=>{
                             </div>
                             <div className="card-model-footer">
                                 <Button variant="contained" onClick={()=>{navigate(`/model-details?model_name=${model}`)}}>More Info</Button>
-                                <Button variant="contained"  style={{ backgroundColor: 'green', color: 'white' }}>Predict</Button>
+                                <Button variant="contained"  style={{ backgroundColor: 'green', color: 'white' }} onClick={()=>{setModelSelectPredict(model); setPredictInfoOpen(true)}}>Predict</Button>
                                 <Button variant="contained" style={{ backgroundColor: 'red', color: 'white' }} onClick={()=>{setModelToDelete(model); setIsAreYouSureOpen(true);}}>Delete</Button>
                             </div>
                         </div>    
@@ -216,6 +216,7 @@ const MyModelsPage = ()=>{
         }
         {isAreYouSureOpen && <AreYouSure yesAction={()=>{deleteTheModel()}} noAction={()=>{}} handleClose={()=>{setIsAreYouSureOpen(false)}} open={isAreYouSureOpen} dialogTitle={"Delete Model"} dialogMessage={`Are you sure you want to delete ${modelToDelete}?`} />}
         <Toaster/>
+        {predictInfoOpen && <PredictInfoDialog  selectedModel={modelSelectPredict} open={predictInfoOpen} handleClose={()=>{setPredictInfoOpen(false)}} />}
     </div>
     )
 }

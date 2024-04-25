@@ -4,7 +4,7 @@
     margin:auto;
     background-color: rgb(243, 242, 242);
     margin-top:40px;
-    min-height: 800px;
+    margin-bottom: 20px;
     border: 1px solid rgb(225, 225, 225);
     border-radius: 10px;
    
@@ -55,4 +55,20 @@ box-shadow: 10px 10px 5px -5px rgba(224,221,224,1);
 .no-model-icon{
     padding-top:20px;
     font-size: 5.0rem;
+}
+
+.list-container{
+    padding-top:"900px";
+}
+
+
+.list-container-title{
+    padding:10px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.list-item{
+    padding:10px;
+    font-size: 1.3rem;
 }

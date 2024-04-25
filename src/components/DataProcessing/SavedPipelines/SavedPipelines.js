@@ -215,8 +215,6 @@ const SavedPipelines = ()=>{
         try{
          const resp = await axios.get(GET_SAVED_PIPELINES(decodedToken));
          parseThePipelineData(resp.data.data);
-         console.log("all the pipelines:");
-         console.log(resp.data.data);
          setAllPipelines(resp.data.data);
          setFilteredPipelines(resp.data.data);
          setIsLoading(false);
@@ -253,8 +251,7 @@ const SavedPipelines = ()=>{
 
     const instiantiateThePipeline = (pipeline_obj)=>{
         const parsedPipelineData = JSON.parse(pipeline_obj);
-        console.log("parsedPipelineData:");
-        console.log(parsedPipelineData);
+        
         if(parsedPipelineData["nodes"]){
           dispatch(setNodes(parsedPipelineData["nodes"]));
         } 

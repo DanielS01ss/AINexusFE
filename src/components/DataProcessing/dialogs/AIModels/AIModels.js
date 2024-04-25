@@ -127,7 +127,7 @@ export default function AIModels (props) {
       },
     });
   
-    const allAlgorithms = ['Procedure name','Random Forest','SVM']
+    const allAlgorithms = ['Procedure name','Random Forest','SVM', 'Linear Regression', 'Logistic Regression', 'Decision Trees', 'Gradient Boosting Machine', 'KNN' , 'DBSCAN']
    
     const appliedMLModels = ()=>{
       

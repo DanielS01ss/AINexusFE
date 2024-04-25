@@ -11,7 +11,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Checkbox from '@mui/material/Checkbox';
-import { faDivide, faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faDivide, faFilter, faArrowsToDot, faBars, faTag } from '@fortawesome/free-solid-svg-icons';
 import { faSquareRootVariable } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Typography } from '@mui/material';
@@ -34,6 +34,7 @@ export default function PreProcessingAlgDialog (props) {
     }
   
     const handleToggle = (value) => () => {
+      
       const currentIndex = checked.indexOf(value);
       const newChecked = [...checked];
   
@@ -53,7 +54,7 @@ export default function PreProcessingAlgDialog (props) {
       },
     });
   
-    const allAlgorithms = ['Procedure name','Data featuring','Normalization','Data Imputation']
+    const allAlgorithms = ['Procedure name','Data featuring','Normalization','Data Imputation', 'Outlier Removal', 'Log Transformation', 'Feature Encoding']
    
     const handleSelectedAlgorithms = ()=>{
       
@@ -63,11 +64,11 @@ export default function PreProcessingAlgDialog (props) {
             type:alg
           }
           listOfNodes.push(newNode);
-        }
+        } 
 
         const newNodes = [];
         for(const node of nodes){
-          if(node.nodeData.type == "Data featuring" || node.nodeData.type == "Normalization" || node.nodeData.type == "Data Imputation"){
+          if(node.nodeData.type == "Data featuring" || node.nodeData.type == "Normalization" || node.nodeData.type == "Data Imputation"  || node.nodeData.type == "Outlier Removal" || node.nodeData.type == "Log Transformation" || node.nodeData.type == "Feature Encoding"){
             continue;
           }
           newNodes.push(node);
@@ -83,7 +84,7 @@ export default function PreProcessingAlgDialog (props) {
     useEffect(()=>{
       const checkedBoxes = [];
       for(const node of nodes){
-        if(node.nodeData.type == "Data featuring" || node.nodeData.type == "Normalization" || node.nodeData.type == "Data Imputation"){
+        if(node.nodeData.type == "Data featuring" || node.nodeData.type == "Normalization" || node.nodeData.type == "Data Imputation" || node.nodeData.type == "Outlier Removal" || node.nodeData.type == "Log Transformation" || node.nodeData.type == "Feature Encoding"){
           checkedBoxes.push(node.nodeData.type);
         }
       }
@@ -177,14 +178,14 @@ export default function PreProcessingAlgDialog (props) {
                      >
                        <ListItemButton>
                          <ListItemAvatar>
-                           <p className='select-dialog-list'><FontAwesomeIcon icon={faSquareRootVariable}/></p> 
+                           <p className='select-dialog-list'><FontAwesomeIcon icon={faBars}/></p> 
                          </ListItemAvatar>
                          <ListItemText  id={labelId}  disableTypography
                          primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>{value}</Typography>} />
                        </ListItemButton>
                      </ListItem>
                    );
-                  } else {
+                  } else if (index == 3){
                      return (
                        <ListItem
                          key={value}
@@ -213,9 +214,102 @@ export default function PreProcessingAlgDialog (props) {
                          </ListItemButton>
                        </ListItem>
                      );
+                  } else if (index == 4){
+                    return (
+                      <ListItem
+                        key={value}
+                        secondaryAction={
+                          <div className='dataset-select-toolbox'>
+                            <Checkbox
+                              edge="end"
+                              onChange={handleToggle(value)}
+                              checked={checked.indexOf(value) !== -1}
+                              inputProps={{ 'aria-labelledby': labelId }}
+                            />
+                            <Button variant="outlined" onClick={()=>{setDisplayMoreInfo(true); setSelectedAlgorithm(allAlgorithms[4]);}}>Info</Button>
+                          </div>
+                        }
+                        disablePadding
+                        sx={{
+                        padding:"15px"
+                        }}
+                      >
+                        <ListItemButton>
+                          <ListItemAvatar>
+                            <p className='select-dialog-list'><FontAwesomeIcon icon={faArrowsToDot}/></p> 
+                          </ListItemAvatar> 
+                          <ListItemText  id={labelId}  disableTypography
+                          primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>{value}</Typography>} />
+                        </ListItemButton>
+                      </ListItem>
+                    );
+                  }
+
+                  else if (index == 5){
+                    return (
+                      <ListItem
+                        key={value}
+                        secondaryAction={
+                          <div className='dataset-select-toolbox'>
+                            <Checkbox
+                              edge="end"
+                              onChange={handleToggle(value)}
+                              checked={checked.indexOf(value) !== -1}
+                              inputProps={{ 'aria-labelledby': labelId }}
+                            />
+                            <Button variant="outlined" onClick={()=>{setDisplayMoreInfo(true); setSelectedAlgorithm(allAlgorithms[5]);}}>Info</Button>
+                          </div>
+                        }
+                        disablePadding
+                        sx={{
+                        padding:"15px"
+                        }}
+                      >
+                        <ListItemButton>
+                          <ListItemAvatar>
+                            <p className='select-dialog-list'><FontAwesomeIcon icon={faSquareRootVariable}/></p> 
+                          </ListItemAvatar> 
+                          <ListItemText  id={labelId}  disableTypography
+                          primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>{value}</Typography>} />
+                        </ListItemButton>
+                      </ListItem>
+                    );
+                  }
+
+                  else if (index == 6){
+                    return (
+                      <ListItem
+                        key={value}
+                        secondaryAction={
+                          <div className='dataset-select-toolbox'>
+                            <Checkbox
+                              edge="end"
+                              onChange={handleToggle(value)}
+                              checked={checked.indexOf(value) !== -1}
+                              inputProps={{ 'aria-labelledby': labelId }}
+                            />
+                            <Button variant="outlined" onClick={()=>{setDisplayMoreInfo(true); setSelectedAlgorithm(allAlgorithms[6]);}}>Info</Button>
+                          </div>
+                        }
+                        disablePadding
+                        sx={{
+                        padding:"15px"
+                        }}
+                      >
+                        <ListItemButton>
+                          <ListItemAvatar>
+                            <p className='select-dialog-list'><FontAwesomeIcon icon={faTag}/></p> 
+                          </ListItemAvatar> 
+                          <ListItemText  id={labelId}  disableTypography
+                          primary={<Typography variant="body2" style={{ color: '#FFFFFF',fontSize:"1.3rem" }}>{value}</Typography>} />
+                        </ListItemButton>
+                      </ListItem>
+                    );
                   }
                   
                 })}
+
+
               </List>
               } 
               {

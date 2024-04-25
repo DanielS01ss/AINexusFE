@@ -6,17 +6,18 @@ import 'reactflow/dist/style.css';
 import FeatureSelection from './custom_nodes/FeatureSelection';
 import Normalization from './custom_nodes/Normalization';
 import DataImputation from './custom_nodes/DataImputation';
+import OutlierRemoval from './custom_nodes/OutlierRemoval.js';
 import ModelTraining from './custom_nodes/ModelTraining';
 import CustomEdge from "./custom_edges/CustomEdge.js";
-import { useReactFlow } from 'reactflow';
+import LogTransformation from './custom_nodes/LogTransformation.js';
 import {  useSelector } from "react-redux/es/hooks/useSelector";
-import { createRef } from 'react';
 import {setMappedNodes, setMappedEdges} from "../../reducers/nodeSlice";
 import {useDispatch} from 'react-redux';
+import FeatureEncoding from './custom_nodes/FeatureEncoding.js';
 
 function Flow() {
 
-  const nodeTypes = useMemo(() => ({ dataSet: Dataset , featureSelection:FeatureSelection, normalization:Normalization, dataImputation:DataImputation, modelTraining:ModelTraining}), []);
+  const nodeTypes = useMemo(() => ({ dataSet: Dataset , featureSelection:FeatureSelection, normalization:Normalization, dataImputation:DataImputation, modelTraining:ModelTraining, outlierRemoval:OutlierRemoval, logTransformation: LogTransformation, featureEncoding:FeatureEncoding}), []);
   const edgeTypes = useMemo(() => ({ special: CustomEdge }), []);
   const storedNodes = useSelector((state)=>state.nodes);
   const storedDataset = useSelector((state)=>state.selectedDataset);
@@ -66,6 +67,12 @@ function Flow() {
         return '#06dca7'
       case 'dataImputation':
         return '#f50c0c'
+      case 'outlierRemoval':
+        return '#9600fa'
+      case 'logTransformation':
+        return '#ff08f7'
+      case 'featureEncoding':
+        return '#4a71ff'
       default:
           return '#c9c7c7'
     }
@@ -175,6 +182,41 @@ function Flow() {
           }
         ); 
       } 
+      if (nodeType == "Outlier Removal" && !containsNode(nodeType,nodes)){
+         
+        newNodes.push(
+          {
+            id: 'node-6',
+            type: 'outlierRemoval',
+            data: { label: 'Outlier Removal' },
+            position: { x: xPosition, y: 25 },
+          }
+        ); 
+      } 
+      if (nodeType == "Log Transformation" && !containsNode(nodeType,nodes)){
+        
+        newNodes.push(
+          {
+            id: 'node-7',
+            type: 'logTransformation',
+            data: { label: 'Log Transformation' },
+            position: { x: xPosition, y: 25 },
+          }
+        ); 
+      } 
+      if (nodeType == "Feature Encoding" && !containsNode(nodeType,nodes)){
+        
+        newNodes.push(
+          {
+            id: 'node-8',
+            type: 'featureEncoding',
+            data: { label: 'Feature Encoding' },
+            position: { x: xPosition, y: 25 },
+          }
+        ); 
+      } 
+     
+
       xPosition = xPosition+800;
     }
     

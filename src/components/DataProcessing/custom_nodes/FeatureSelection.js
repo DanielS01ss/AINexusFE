@@ -109,7 +109,7 @@ export default memo(({ data, isConnectable }) => {
 
         </div>
         <div className='dataset-node-info-section'>
-            <h3> <FontAwesomeIcon icon={faTable}/> Selected Rows</h3>
+            <h3>  Selected Rows</h3>
             <hr/>
             {rows.length != 0 && 
               <TableContainer component={Paper}>

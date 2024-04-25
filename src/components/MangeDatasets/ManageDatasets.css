@@ -1,0 +1,41 @@
+.manage-datasets-title{
+    padding-top:90px;
+    font-weight: bold;
+    font-size: 1.6rem;
+}
+
+.cards-container{
+    width: 90%;
+    padding-top: 60px;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.card-container{
+    padding: 40px;
+    font-size: 1.2rem;
+    background-color: #414145;
+    border: 5px solid #b3b3b3;
+    color:#fff;
+    margin-left: 5px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    -webkit-box-shadow: 10px 10px 5px -9px rgba(201,201,201,1);
+    -moz-box-shadow: 10px 10px 5px -9px rgba(201,201,201,1);
+    box-shadow: 10px 10px 5px -9px rgba(201,201,201,1);
+}
+
+.card-container-dataset-name{
+    padding:5px;
+}
+
+.card-container-controls{
+    padding:5px;
+}
+
+.error-message{
+    padding:20px;
+}

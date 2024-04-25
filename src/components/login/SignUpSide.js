@@ -23,7 +23,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="/">
-        AI Nexus
+        AI Flow Forge
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}

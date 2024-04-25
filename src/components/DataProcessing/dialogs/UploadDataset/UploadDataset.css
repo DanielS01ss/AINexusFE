@@ -1,0 +1,27 @@
+.upload-section{
+    padding-top:10px;
+    padding-bottom: 20px;
+}
+
+.add-btn{
+    margin-top: 10px;
+    margin-left: 10px;
+    background-color: green;
+    color:#fff;
+}
+
+.bubble-items{
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    
+}
+
+.bubble-items-instance{
+    border:3px solid rgb(47, 47, 250);
+    margin-right: 20px;
+    border-radius: 20px;
+    /* background-color: rgb(47, 47, 250); */
+    margin-top:5px;
+    padding:8px
+}

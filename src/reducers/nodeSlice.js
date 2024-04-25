@@ -1,4 +1,5 @@
 import {createSlice, nanoid} from '@reduxjs/toolkit'
+import { act } from 'react-dom/test-utils';
 
 
 const initialState = {
@@ -13,6 +14,12 @@ const initialState = {
     mappedNodes:[],
     constant_value_imputation_columns:[],
     constant_value_imputation_values:[],
+    outlier_removal_columns:[],
+    log_transformation_columns:[],
+    feature_encoding_columns:[],
+    label_encoding_columns:[],
+    target_encoding_columns:[],
+    one_hot_encoding_columns:[],
     edges:[],
     trainedModel:"",
     ml_algorithm_target:{},
@@ -36,6 +43,24 @@ export const nodeSlice = createSlice({
                 state.nodes.push(newNode);
             }
             
+        },
+        setLabelEncodingColumns:(state,action)=>{
+            state.label_encoding_columns = action.payload;
+        },
+        setTargetEncodingColumns:(state, action)=>{
+            state.target_encoding_columns = action.payload;
+        },
+        setOneHotEncodingColumnsReducer:(state, action)=>{
+            state.one_hot_encoding_columns = action.payload;
+        },
+        setOutlierRemovalColumns:(state,action)=>{
+            state.outlier_removal_columns = action.payload;
+        },
+        setLogTransformationColumns:(state, action)=>{
+            state.log_transformation_columns = action.payload;
+        },
+        setFeatureEncodingColumns:(state,action)=>{
+            state.feature_encoding_columns = action.payload;
         },
         setMLAlgorithmTarget:(state, action)=>{
             state.ml_algorithm_target = action.payload;
@@ -114,6 +139,6 @@ export const nodeSlice = createSlice({
 });
 
 
-export const { setMLAlgorithmParameters, setTrainedModel, setIsTrainingStarted, setMLAlgorithmTarget,setStoredConstantValueImputationValues, setConstantValueImputationColumns,setMappedNodes, setMappedEdges, resetSelectedModelType, resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete, clearDataset, removePreProcessingNodes} = nodeSlice.actions
+export const { setOneHotEncodingColumnsReducer, setTargetEncodingColumns, setLabelEncodingColumns, setLogTransformationColumns, setOutlierRemovalColumns, setMLAlgorithmParameters, setTrainedModel, setIsTrainingStarted, setMLAlgorithmTarget,setStoredConstantValueImputationValues, setConstantValueImputationColumns,setMappedNodes, setMappedEdges, resetSelectedModelType, resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete, clearDataset, removePreProcessingNodes} = nodeSlice.actions
 
 export default nodeSlice.reducer;

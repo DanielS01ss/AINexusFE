@@ -51,14 +51,14 @@ export const LandingPage = ()=>{
 
                     <div className="landing-page-card">
                         <div className="landing-page-card-title">
-                            Auto ML
+                            Pipeline Generation
                         </div>
                         <Divider/>
                         <div className="landing-page-card-icon-container">
                             <img src={algorithmImage} className="landing-page-logo" />
                         </div>
                         <div className="landing-page-card-text">
-                            Auto ML algorithms to find the best fit for your data
+                            We are using LLMs to generate custom pipelines
                         </div>
                         <Divider/>
                     </div>
