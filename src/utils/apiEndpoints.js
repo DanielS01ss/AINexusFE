@@ -19,3 +19,7 @@ export const UPLOAD_FILE = `http://localhost:8081/uploadfile`;
 export const FILE_METADATA =  `http://localhost:8081/uploadmetadata`;
 export const DELETE_DATASET = (id)=>`http://localhost:8081/dataset?id=${id}`;
 export const COLUMNS_FOR_ENCODING = (dataset_name) => `http://localhost:8081/columns-for-encoding?dataset_name=${dataset_name}`;
+export const GENERATE_PIPELINE = `http://localhost:8081/generate-pipeline`;
+export const GET_GENERATED_KEYS = (user_email) => `http://localhost:8081/generate-key?key_data=${user_email}`;
+export const DELETE_GENERATE_KEY = (key)=>`http://localhost:8081/generate-key?key_data=${key}`;
+export const GENERATE_KEY = `http://localhost:8081/generate-key`;

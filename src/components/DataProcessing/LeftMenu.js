@@ -27,6 +27,9 @@ import PreProcessingAlgDialog from './dialogs/PreProcessingAlgDialog/PreProcessi
 import LogoutIcon from '@mui/icons-material/Logout';
 import SnippetFolderIcon from '@mui/icons-material/SnippetFolder';
 import AIModels from './dialogs/AIModels/AIModels';
+import KeyIcon from '@mui/icons-material/Key';
+import ManageAPIKeys from './dialogs/ManageAPIKeys/ManageAPIKeys';
+import GridViewIcon from '@mui/icons-material/GridView';
 import toast, { Toaster } from 'react-hot-toast';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import AreYouSure from './dialogs/AreYouSure/AreYouSure';
@@ -108,6 +111,7 @@ export default function MiniDrawer() {
   const [displayMLModels, setDisplayMLModels] = React.useState(false);
   const [isDatasetSelected, setIsDatasetSelected] = React.useState(false);
   const [areYouSureOpen, setAreYouSureOpen] = React.useState(false);
+  const [isManageKeysOpen, setIsManageKeysOpen] = React.useState(false);
   const dataset = useSelector((state)=>state.selectedDataset);
 
   const blockAlert = (msg)=>{
@@ -379,6 +383,52 @@ export default function MiniDrawer() {
                   <ListItemText primary={"Manage Datasets"} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
             </ListItem>
+            <ListItem key={"Manage API Keys"} disablePadding sx={{ display: 'block' }} onClick={()=>{setIsManageKeysOpen(true)}}>
+              <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                    color:"white"
+                  }}
+                  key={4} 
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                      color:"white"
+                    }}
+                  >
+                   <KeyIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={"Manage API Keys"} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+            </ListItem>
+            <ListItem key={"Block Hub"} disablePadding sx={{ display: 'block' }} onClick={()=>{setIsManageKeysOpen(true)}}>
+              <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                    color:"white"
+                  }}
+                  key={4} 
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                      color:"white"
+                    }}
+                  >
+                   <GridViewIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={"Block Hub"} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+            </ListItem>
         </List>
       </Drawer>
       <Toaster/>
@@ -388,6 +438,7 @@ export default function MiniDrawer() {
      {preProcessingAlgDialogOpen && <PreProcessingAlgDialog open={preProcessingAlgDialogOpen} handleClose={handlePreprocessingAlgDialogClose} />}
      {displayMLModels && <AIModels open={displayMLModels} handleClose={handleDisplayMLModels} />}
      {areYouSureOpen && <AreYouSure noAction={()=>{}}  yesAction={()=>{handleLogout()}} alertDialogTitle={"Logout"} open={areYouSureOpen}  dialogMessage={"Do you want to sign out?"} handleClose={handleCloseAreYouSure}/>}
+     {isManageKeysOpen && <ManageAPIKeys open={isManageKeysOpen} handleClose={()=>{setIsManageKeysOpen(false)}} /> }
     </Box>
   );
 }

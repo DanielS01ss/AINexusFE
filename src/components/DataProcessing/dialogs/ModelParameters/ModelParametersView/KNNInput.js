@@ -1,20 +1,21 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
     Unstable_NumberInput as BaseNumberInput,
     numberInputClasses,
   } from '@mui/base/Unstable_NumberInput';
+  import {useState, useEffect} from "react";
+  import { useDispatch } from "react-redux";
 import { styled } from '@mui/system';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { useDispatch, useSelector } from "react-redux";
-import Button from '@mui/material/Button';
 import { setMLAlgorithmParameters } from "../../../../../reducers/nodeSlice";
 import toast, { Toaster } from 'react-hot-toast';
-import { NumericFormat  } from "react-number-format";
+import Button from '@mui/material/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from "react-redux";
 import style from "./ModelParametersView.css";
 
 const CustomNumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
@@ -40,102 +41,90 @@ const CustomNumberInput = React.forwardRef(function CustomNumberInput(props, ref
     );
   });
 
-export default function RandomForestInput (props){
-    const [allParameters, setAllParameters] = React.useState({
+export default function KNNInput (){
+  const [allParameters, setAllParameters] = React.useState({
+  })
+  const ml_algorithm_parameters = useSelector((state)=> state.ml_algorithm_parameters);
+
+  const dispatch = useDispatch();
+  const handleChange = (value, element) => {
+    const updatedParametersValues = {...allParameters};
+    updatedParametersValues[element] = value;
+    setAllParameters(updatedParametersValues);
+  };
+
+  const blockAlert = (msg)=>{
+    toast.success(msg,{
+      duration:2000,
+      position:'top-right',
     })
-    const ml_algorithm_parameters = useSelector((state)=> state.ml_algorithm_parameters);
+  }
 
-    const dispatch = useDispatch();
-    const handleChange = (value, element) => {
-      const updatedParametersValues = {...allParameters};
-      updatedParametersValues[element] = value;
-      setAllParameters(updatedParametersValues);
-    };
+  const handleSave = ()=>{
+    dispatch(setMLAlgorithmParameters(allParameters));
+    blockAlert("The parameters were successfully saved!");
+  }
 
-    const blockAlert = (msg)=>{
-      toast.success(msg,{
-        duration:2000,
-        position:'top-right',
-      })
+  useEffect(()=>{
+    if(Object.keys(ml_algorithm_parameters)!=0){
+      setAllParameters(ml_algorithm_parameters);
     }
+  },[ml_algorithm_parameters])
 
-    const handleSave = ()=>{
-      dispatch(setMLAlgorithmParameters(allParameters));
-      blockAlert("The parameters were successfully saved!");
-    }
 
-    useEffect(()=>{
-      if(Object.keys(ml_algorithm_parameters)!=0){
-        setAllParameters(ml_algorithm_parameters);
-      }
-    },[ml_algorithm_parameters])
-
- 
     return (
-        <div>
+        <div> 
             <div className="input-element">
-                <p className="parameter-name">n_estimators</p>
-                <CustomNumberInput sx={{width:"60%", mx:"auto"}} onChange={(event,value)=>{handleChange(value,"n_estimators")}} value={allParameters["n_estimators"]? allParameters["n_estimators"]:""} aria-label="Demo number input" placeholder="Type a number…" min={10} max={500} />
-                <p className="info-bullet-container"> <FontAwesomeIcon icon={faCircleInfo}/> Range: (10 , 500) </p>
+                <p className="parameter-name">learning_rate</p>
+                <CustomNumberInput value={allParameters["learning_rate"] ? allParameters["learning_rate"] : ""} onChange={(event,value)=>{handleChange(value,"learning_rate")}} sx={{width:"60%", mx:"auto"}} aria-label="Demo number input" placeholder="Type a number…" min={1} max={20}  />
+                <p className="info-bullet-container"> <FontAwesomeIcon icon={faCircleInfo}/> Range: (1 , 20) </p>
             </div>
+           
             <div className="input-element">
-                <p className="parameter-name">Criterion</p>
+                <p className="parameter-name">weights</p>
                 <FormControl fullWidth sx={{width:"60%", mx:"auto"}}>
-                    <InputLabel id="demo-simple-select-label">Criterion</InputLabel>
+                    <InputLabel id="demo-simple-select-label">weights</InputLabel>
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
-                      value={allParameters["criterion"]? allParameters["criterion"]: ""}
-                      label="Criterion"
-                      onChange={(event)=>{handleChange(event.target.value, "criterion")}}
+                      value={allParameters["weights"]?allParameters["weights"] : ""}
+                      label="weights"
+                      onChange={(event)=>{handleChange(event.target.value, "weights")}}
                     >
-                      <MenuItem value={"entropy"}>entropy</MenuItem>
-                      <MenuItem value={"gini"}>gini</MenuItem>
+                      <MenuItem value={"auto"}>uniform</MenuItem>
+                      <MenuItem value={"sqrt"}>distance</MenuItem>
                     </Select>
                 </FormControl>
             </div>
             <div className="input-element">
-                <p className="parameter-name">max_depth</p>
-                <CustomNumberInput sx={{width:"60%", mx:"auto"}}  onChange={(event,value)=>{handleChange(value,"max_depth")}} value={allParameters["max_depth"] ? allParameters["max_depth"]:""} aria-label="Demo number input" placeholder="Type a number…" min={5} max={100} />
-                <p className="info-bullet-container"> <FontAwesomeIcon icon={faCircleInfo}/> Range: (5 , 100) </p>
+                <p className="parameter-name">algorithm</p>
+                <FormControl fullWidth sx={{width:"60%", mx:"auto"}}>
+                    <InputLabel id="demo-simple-select-label">algorithm</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={allParameters["algorithm"]? allParameters["algorithm"] : ""}
+                      label="algorithm"
+                      onChange={(event)=>{handleChange(event.target.value, "algorithm")}}
+                    >
+                      <MenuItem value={"auto"}>auto</MenuItem>
+                      <MenuItem value={"ball_tree"}>ball_tree</MenuItem>
+                      <MenuItem value={"kd_tree"}>kd_tree</MenuItem>
+                      <MenuItem value={"brute"}>brute</MenuItem>
+                    </Select>
+                </FormControl>
             </div>
             <div className="input-element">
-                <p className="parameter-name">min_samples_split</p>
-                <CustomNumberInput sx={{width:"60%", mx:"auto"}} onChange={(event,value)=>{handleChange(value,"min_samples_split")}} value={allParameters["min_samples_split"] ? allParameters["min_samples_split"]:""} aria-label="Demo number input" placeholder="Type a number…" min={2} max={20} />
-                <p className="info-bullet-container"> <FontAwesomeIcon icon={faCircleInfo}/> Range: (2 , 20) </p>
-            </div>
-            <div className="input-element">
-                <p className="parameter-name">min_samples_leaf</p>
-                <CustomNumberInput sx={{width:"60%", mx:"auto"}} onChange={(event,value)=>{handleChange(value,"min_samples_leaf")}} value={allParameters["min_samples_leaf"] ? allParameters["min_samples_leaf"]:""} aria-label="Demo number input" placeholder="Type a number…" min={1} max={10} />
-                <p className="info-bullet-container"> <FontAwesomeIcon icon={faCircleInfo}/> Range: (1 , 10) </p>
-            </div>
-            <div className="input-element">
-                <p className="parameter-name">max_features</p>
-                <NumericFormat
-                        className="numeric-format-input-custom"
-                        value={allParameters["max_features"]}
-                        isAllowed={(values) => {
-                        const { floatValue } = values;
-                        if(floatValue <= 1.0 && floatValue >= 0)
-                        {
-                          
-                          handleChange(floatValue,"max_features");
-                        }
-                      return  floatValue <= 1.0 && floatValue >= 0;
-                      }}
-                  />
-                  <p className="info-bullet-container"> <FontAwesomeIcon icon={faCircleInfo}/> Range: (0 , 1.0) </p>
-            </div>
-            <div> 
- 
+                <p className="parameter-name">leaf_size</p>
+                <CustomNumberInput sx={{width:"60%", mx:"auto"}} value={allParameters["leaf_size"]? allParameters["leaf_size"] : ""} onChange={(event,value)=>{handleChange(value,"leaf_size")}} aria-label="Demo number input" placeholder="Type a number…" min={1} max={20}  />
             </div>
             <div className="save-btn-variable-input">
-              <Button onClick={()=>{handleSave()}} sx={{mb:"20px", color:"#fff", bgcolor:"blue", fontSize:"1.2rem"}} autoFocus>
+              <Button onClick={()=>{handleSave()}} sx={{mb:"10px", color:"#fff", bgcolor:"blue", fontSize:"1.2rem"}} autoFocus>
                     Save
               </Button>
             </div>
         </div>
-      );
+      ); 
 }
 
 

@@ -110,7 +110,7 @@ export default function DataFeaturing(props){
         
         dispatch(setSelectedDataFeaturingColumns(checked));
         props.handleClose();
-    }
+    } 
 
     useEffect(()=>{
         parseAndSetData(dataset)

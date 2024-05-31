@@ -31,6 +31,7 @@ import { jwtDecode } from "jwt-decode";
 function DataProcessing() {
 
   const nodes = useSelector((state)=> state.nodes);
+  const ml_algorithm_parameters = useSelector((state)=> state.ml_algorithm_parameters);
   const constant_value_imputation_columns = useSelector((state)=>state.constant_value_imputation_columns);
   const constant_value_imputation_values = useSelector((state)=>state.constant_value_imputation_values);
   const pipelineNodes = useSelector((state)=>state.mappedNodes);
@@ -149,13 +150,15 @@ function DataProcessing() {
       email: email
     }
 
-     console.log("Request Object:");
-     console.log(requestObject);
+    console.log("requestObj:");
+    console.log(requestObject);
+
+
   
     dispatch(setIsTrainingStarted(true));
     try{
       const resp = await axios.post(START_PIPELINE, requestObject);
-      console.log(resp.data);
+      
       getCurrentTrainedModel(resp.data);
       savePipelineLogs(resp.data);
       setHasNotification(true);
@@ -211,8 +214,7 @@ function DataProcessing() {
         blockAlert("The pipeline does not meet the requirements!");
         return;
       }
-      setActiveSteps([0]) 
-      setIsPipelineStarted(true);
+     
       const orderOfOperations = []; 
       let resultSearch = 'node-1';
       orderOfOperations.push(resultSearch);
@@ -270,11 +272,17 @@ function DataProcessing() {
           operationsList.push(operationObj);
           }
         } else if(operation == "node-5"){ 
+        
+          if(!storedMLAlgorithmTarget.target_column){
+            blockAlert("Please specify a target column!");
+            return;
+          } 
             operationObj = {
               operation_name:"Model Training",
               ml_algorithm: storedMLAlgorithmTarget.model_name,
-              target:storedMLAlgorithmTarget.target_column.column_name
-            }
+              target:storedMLAlgorithmTarget.target_column.column_name,
+              model_parameters: ml_algorithm_parameters
+            } 
             operationsList.push(operationObj);
         } else if (operation == "node-6"){
           operationObj = {
@@ -321,10 +329,13 @@ function DataProcessing() {
         }
         
       }
+
+      setActiveSteps([0]) 
+      setIsPipelineStarted(true);
       setTimeout(()=>{
         setActiveSteps([0,1]);
       },300)
-
+      //aici se fac request-urille
       makeRequestForPipeline(operationsList);
   } 
 
@@ -374,10 +385,7 @@ function DataProcessing() {
 
   },[nodes])
 
-  useEffect(()=>{
-    console.log("ml_algorithm_target:");
-    console.log(ml_algorithm_target);
-  },[ml_algorithm_target])
+
 
  
     return (

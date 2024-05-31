@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React,{useEffect, useState} from "react";
 import {
     Unstable_NumberInput as BaseNumberInput,
     numberInputClasses,
@@ -8,13 +8,11 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { useDispatch, useSelector } from "react-redux";
 import Button from '@mui/material/Button';
 import { setMLAlgorithmParameters } from "../../../../../reducers/nodeSlice";
 import toast, { Toaster } from 'react-hot-toast';
-import { NumericFormat  } from "react-number-format";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import style from "./ModelParametersView.css";
 
 const CustomNumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
@@ -40,97 +38,88 @@ const CustomNumberInput = React.forwardRef(function CustomNumberInput(props, ref
     );
   });
 
-export default function RandomForestInput (props){
-    const [allParameters, setAllParameters] = React.useState({
+export default function LinearRegressionInput (){
+  const [allParameters, setAllParameters] = React.useState({
+  })
+  const ml_algorithm_parameters = useSelector((state)=> state.ml_algorithm_parameters);
+
+  const dispatch = useDispatch();
+  const handleChange = (value, element) => {
+    const updatedParametersValues = {...allParameters};
+    updatedParametersValues[element] = value;
+    setAllParameters(updatedParametersValues);
+  };
+
+  const blockAlert = (msg)=>{
+    toast.success(msg,{
+      duration:2000,
+      position:'top-right',
     })
-    const ml_algorithm_parameters = useSelector((state)=> state.ml_algorithm_parameters);
+  }
 
-    const dispatch = useDispatch();
-    const handleChange = (value, element) => {
-      const updatedParametersValues = {...allParameters};
-      updatedParametersValues[element] = value;
-      setAllParameters(updatedParametersValues);
-    };
+  const handleSave = ()=>{
+    dispatch(setMLAlgorithmParameters(allParameters));
+    blockAlert("The parameters were successfully saved!");
+  }
 
-    const blockAlert = (msg)=>{
-      toast.success(msg,{
-        duration:2000,
-        position:'top-right',
-      })
+  useEffect(()=>{
+    if(Object.keys(ml_algorithm_parameters)!=0){
+      setAllParameters(ml_algorithm_parameters);
     }
-
-    const handleSave = ()=>{
-      dispatch(setMLAlgorithmParameters(allParameters));
-      blockAlert("The parameters were successfully saved!");
-    }
-
-    useEffect(()=>{
-      if(Object.keys(ml_algorithm_parameters)!=0){
-        setAllParameters(ml_algorithm_parameters);
-      }
-    },[ml_algorithm_parameters])
-
+  },[ml_algorithm_parameters])
  
     return (
-        <div>
+        <div> 
             <div className="input-element">
-                <p className="parameter-name">n_estimators</p>
-                <CustomNumberInput sx={{width:"60%", mx:"auto"}} onChange={(event,value)=>{handleChange(value,"n_estimators")}} value={allParameters["n_estimators"]? allParameters["n_estimators"]:""} aria-label="Demo number input" placeholder="Type a number…" min={10} max={500} />
-                <p className="info-bullet-container"> <FontAwesomeIcon icon={faCircleInfo}/> Range: (10 , 500) </p>
-            </div>
-            <div className="input-element">
-                <p className="parameter-name">Criterion</p>
+                <p className="parameter-name">fit_intercept</p>
                 <FormControl fullWidth sx={{width:"60%", mx:"auto"}}>
-                    <InputLabel id="demo-simple-select-label">Criterion</InputLabel>
+                    <InputLabel id="demo-simple-select-label">fit_intercept</InputLabel>
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
-                      value={allParameters["criterion"]? allParameters["criterion"]: ""}
-                      label="Criterion"
-                      onChange={(event)=>{handleChange(event.target.value, "criterion")}}
+                      value={allParameters["fit_intercept"]? allParameters["fit_intercept"]: ""}
+                      label="fit_intercept"
+                      onChange={(event)=>{handleChange(event.target.value, "fit_intercept")}}
                     >
-                      <MenuItem value={"entropy"}>entropy</MenuItem>
-                      <MenuItem value={"gini"}>gini</MenuItem>
+                      <MenuItem value={"True"}>True</MenuItem>
+                      <MenuItem value={"False"}>False</MenuItem>
                     </Select>
                 </FormControl>
             </div>
             <div className="input-element">
-                <p className="parameter-name">max_depth</p>
-                <CustomNumberInput sx={{width:"60%", mx:"auto"}}  onChange={(event,value)=>{handleChange(value,"max_depth")}} value={allParameters["max_depth"] ? allParameters["max_depth"]:""} aria-label="Demo number input" placeholder="Type a number…" min={5} max={100} />
-                <p className="info-bullet-container"> <FontAwesomeIcon icon={faCircleInfo}/> Range: (5 , 100) </p>
+                <p className="parameter-name">Normalize</p>
+                <FormControl fullWidth sx={{width:"60%", mx:"auto"}}>
+                    <InputLabel id="demo-simple-select-label">Normalize</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="normalize"
+                      value={allParameters["normalize"]? allParameters["normalize"] : ""}
+                      onChange={(event)=>{handleChange(event.target.value, "normalize")}}
+                    >
+                      <MenuItem value={"True"}>True</MenuItem>
+                      <MenuItem value={"False"}>False</MenuItem>
+                    </Select>
+                </FormControl>
             </div>
             <div className="input-element">
-                <p className="parameter-name">min_samples_split</p>
-                <CustomNumberInput sx={{width:"60%", mx:"auto"}} onChange={(event,value)=>{handleChange(value,"min_samples_split")}} value={allParameters["min_samples_split"] ? allParameters["min_samples_split"]:""} aria-label="Demo number input" placeholder="Type a number…" min={2} max={20} />
-                <p className="info-bullet-container"> <FontAwesomeIcon icon={faCircleInfo}/> Range: (2 , 20) </p>
-            </div>
-            <div className="input-element">
-                <p className="parameter-name">min_samples_leaf</p>
-                <CustomNumberInput sx={{width:"60%", mx:"auto"}} onChange={(event,value)=>{handleChange(value,"min_samples_leaf")}} value={allParameters["min_samples_leaf"] ? allParameters["min_samples_leaf"]:""} aria-label="Demo number input" placeholder="Type a number…" min={1} max={10} />
-                <p className="info-bullet-container"> <FontAwesomeIcon icon={faCircleInfo}/> Range: (1 , 10) </p>
-            </div>
-            <div className="input-element">
-                <p className="parameter-name">max_features</p>
-                <NumericFormat
-                        className="numeric-format-input-custom"
-                        value={allParameters["max_features"]}
-                        isAllowed={(values) => {
-                        const { floatValue } = values;
-                        if(floatValue <= 1.0 && floatValue >= 0)
-                        {
-                          
-                          handleChange(floatValue,"max_features");
-                        }
-                      return  floatValue <= 1.0 && floatValue >= 0;
-                      }}
-                  />
-                  <p className="info-bullet-container"> <FontAwesomeIcon icon={faCircleInfo}/> Range: (0 , 1.0) </p>
-            </div>
-            <div> 
- 
+                <p className="parameter-name">copy_x</p>
+                <FormControl fullWidth sx={{width:"60%", mx:"auto"}}>
+                    <InputLabel id="demo-simple-select-label">copy_x</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="copy_x"
+                      value={allParameters["copy_x"]?allParameters["copy_x"] : "" }
+                      onChange={(event)=>{handleChange(event.target.value, "copy_x")}}
+                    >
+                      <MenuItem value={"True"}>True</MenuItem>
+                      <MenuItem value={"False"}>False</MenuItem>
+                    </Select>
+                </FormControl>
             </div>
             <div className="save-btn-variable-input">
-              <Button onClick={()=>{handleSave()}} sx={{mb:"20px", color:"#fff", bgcolor:"blue", fontSize:"1.2rem"}} autoFocus>
+              <Button onClick={()=>{handleSave()}} sx={{mb:"10px", color:"#fff", bgcolor:"blue", fontSize:"1.2rem"}} autoFocus>
                     Save
               </Button>
             </div>

@@ -17,11 +17,9 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import {setNodes, resetSelectedModelType, setIsTrainingStarted} from "../../../reducers/nodeSlice";
+import ModelParameters from '../dialogs/ModelParameters/ModelParameters';
 
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
 export default memo(({ data, isConnectable }) => {
  
   const dispatch = useDispatch();
@@ -30,18 +28,14 @@ export default memo(({ data, isConnectable }) => {
   const modelParameters = useSelector((state)=>state.ml_algorithm_parameters);
   const trainedModel = useSelector((state)=> state.trainedModel);
   const selectedModel = useSelector((state)=> state.selectedModelType);
+  const [modelParametersWindowOpen, setModelParametersWindowOpen] = useState(false);
   const [isTraining, setIsTraining] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
   const [hasModelParameters, setHasModelParameters] = useState(false);
+  const [rows, setRows] = useState([]);
 
   const allNodes = useSelector((state)=>state.nodes);
-  const rows = [
-    createData('n_depth', 159),
-    createData('max_depth', 237),
-    createData('min_samples_split', 262)
-  ];
-
-
+  
   const darkTheme = createTheme({
     palette: {
       mode: 'dark',
@@ -65,20 +59,44 @@ export default memo(({ data, isConnectable }) => {
     
   }
 
+  const parseModelParameters = (model_params)=>{
+    let parsedModelKeys = Object.keys(model_params);
+    let parsedModelValues = Object.values(model_params);
+    let result = [];
+
+    if(modelParameters && Object.entries(modelParameters).length!=0){
+      parsedModelKeys.map((item, index)=>{
+        const newObj = {};
+        newObj["name"] = item;
+        newObj["value"] = parsedModelValues[index];
+        result.push(newObj);
+      });
+      setRows(result);
+    } else {
+      setRows([]);
+    }
+    
+  }
+
   React.useEffect(()=>{
     setIsTraining(isTraining);
   },[setIsTrainingStarted])
 
   useEffect(()=>{
+    
     if(modelParameters){
+
       if(Object.keys(modelParameters).length == 0){
         setHasModelParameters(false);
       } else {
         setHasModelParameters(true);
+        parseModelParameters(modelParameters);
       }
     }
    
   },[modelParameters])
+
+  
 
  
   return (
@@ -98,13 +116,13 @@ export default memo(({ data, isConnectable }) => {
         <p className='remove-node-btn-container' onClick={()=>{deleteNode()}} ><span className='remove-node-btn'>x</span></p>
         </div>
         <div className='dataset-node-info-section'>
-            <h3> {selectedModel} </h3>
+             <h3> {selectedModel} </h3>
             <hr/>
               <div className='training-card-body'>
                 {hasModelParameters && 
                 <>
                   <h1>Model parameters</h1>
-                 <p className='elapsed-time'>Random Forest</p>
+                 
                  <TableContainer component={Paper} sx={{ maxWidth: 550,backgroundColor:"#121212", padding:"10px" }} theme={darkTheme}>
                   <Table sx={{ maxWidth: 550}} aria-label="simple table" >
                     <TableHead>
@@ -114,7 +132,7 @@ export default memo(({ data, isConnectable }) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rows.map((row) => (
+                      {rows && rows.length !==0 && rows.map((row) => (
                         <TableRow
                           key={row.name}
                           sx={{ '&:last-child td, &:last-child th': { border: 0 },color:"#fff" }}
@@ -122,7 +140,7 @@ export default memo(({ data, isConnectable }) => {
                           <TableCell component="th" scope="row" sx={{color:"#fff", fontSize:"1.3rem"}}>
                             {row.name}
                           </TableCell>
-                          <TableCell align="right" sx={{color:"#fff", fontSize:"1.3rem"}}>{row.calories}</TableCell>
+                          <TableCell align="right" sx={{color:"#fff", fontSize:"1.3rem"}}>{row.value}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -160,12 +178,12 @@ export default memo(({ data, isConnectable }) => {
               </div>
             <hr/>
             <div className='dataset-node-bottom-toolbox'>
-                <button className='dataset-toolbox-btn model-data-btn' style={{"color":"#fff", "borderColor":"#fff"}} > Parameters <FontAwesomeIcon icon={faListCheck}/></button>
+                <button className='dataset-toolbox-btn model-data-btn' style={{"color":"#fff", "borderColor":"#fff"}} onClick={()=>{setModelParametersWindowOpen(true)}}> Parameters <FontAwesomeIcon icon={faListCheck}/></button>
                 <button className='dataset-toolbox-btn model-data-btn' style={{"color":"#fff", "borderColor":"#fff"}} onClick={()=>{navigateToStatistics()}} disabled={ !trainedModel || trainedModel.length==0} > Statistics <FontAwesomeIcon icon={faSquarePollVertical}/></button>
             </div>
         </div>
         <div className='dataset-node-bottom'>
-    
+             {modelParametersWindowOpen && <ModelParameters open={modelParametersWindowOpen} handleClose={()=>{setModelParametersWindowOpen(false);}}  alertDialogTitle={"Set Model Parameters"} modelType={selectedModel} />}
         </div>
       </div>
    

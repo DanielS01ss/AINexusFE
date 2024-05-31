@@ -139,6 +139,6 @@ export const nodeSlice = createSlice({
 });
 
 
-export const { setOneHotEncodingColumnsReducer, setTargetEncodingColumns, setLabelEncodingColumns, setLogTransformationColumns, setOutlierRemovalColumns, setMLAlgorithmParameters, setTrainedModel, setIsTrainingStarted, setMLAlgorithmTarget,setStoredConstantValueImputationValues, setConstantValueImputationColumns,setMappedNodes, setMappedEdges, resetSelectedModelType, resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete, clearDataset, removePreProcessingNodes} = nodeSlice.actions
+export const {setFeatureEncodingColumns, setOneHotEncodingColumnsReducer, setTargetEncodingColumns, setLabelEncodingColumns, setLogTransformationColumns, setOutlierRemovalColumns, setMLAlgorithmParameters, setTrainedModel, setIsTrainingStarted, setMLAlgorithmTarget,setStoredConstantValueImputationValues, setConstantValueImputationColumns,setMappedNodes, setMappedEdges, resetSelectedModelType, resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete, clearDataset, removePreProcessingNodes} = nodeSlice.actions
 
 export default nodeSlice.reducer;

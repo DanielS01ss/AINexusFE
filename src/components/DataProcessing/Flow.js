@@ -29,7 +29,8 @@ function Flow() {
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(initialEdges);
   const [firstRender, setFirstRender] = useState(true);
-
+  const normalization_data = useSelector((state)=> state.normalizationColumns);
+  const ml_alg_target = useSelector((state) => state.ml_algorithm_target);
 
   let xPosition = 0;
   const dispatch = useDispatch();
@@ -53,7 +54,7 @@ function Flow() {
     width: '100%',
     height: 300,
   };
-  
+ 
 
   const nodeColor = (node) => {
     switch (node.type) {
@@ -322,6 +323,13 @@ function Flow() {
     }
   },[storedEdges])
 
+
+  // ### IMPORTANT - AICI ESTE CODUL CU CARE SPAWNEZI UN EDGE #####
+  // useEffect(()=>{
+  //   setTimeout(()=>{
+  //      onConnect({source: 'node-2', sourceHandle: 'b', target: 'node-3', targetHandle: 'a'});
+  //   },10000)
+  // },[])
 
     return (
       <div style={{ width: '96vw', height: '100vh' }}>

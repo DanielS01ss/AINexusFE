@@ -24,7 +24,7 @@ import style from "./DataSelectDialog.css";
 import DataSetInfo from './DataSetInfo';
 import {DATASET_FETCH_ALL_DATASETS} from "../../../../utils/apiEndpoints";
 import axios from "axios";
-import {addNode, addDataset, setNodes, clearDataset} from "../../../../reducers/nodeSlice";
+import {addNode, addDataset, setNodes, clearDataset, setMLAlgorithmTarget} from "../../../../reducers/nodeSlice";
 import {useDispatch} from 'react-redux';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import {getToken} from "../../../../utils/getTokens";
@@ -105,6 +105,7 @@ export default function DataSelectDialog(props) {
 
     axios.get(DATASET_FETCH_ALL_DATASETS(email)).then((resp)=>{
       const fetchedData = resp.data;
+      
       setFilteredDatasets(resp.data);
       setDataSets(fetchedData);
       setDatasetSearch(fetchedData);
@@ -135,14 +136,16 @@ export default function DataSelectDialog(props) {
 
   const addCorespondingDataset = ()=>{
   
-
+   
     if(dataset.length == 0){
+      dispatch(setMLAlgorithmTarget({}));
       dispatch(addDataset(checked[0]));
       return;
     }
    
     if(dataset.length !=0 && dataset[0].dataset_name != checked[0].dataset_name)
     {
+      dispatch(setMLAlgorithmTarget({}));
       dispatch(addDataset(checked[0]));
     }
        

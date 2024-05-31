@@ -43,7 +43,7 @@ export default function Tools(props) {
   const constant_value_imputation_values = useSelector((state)=> state.constant_value_imputation_values);
   const ml_algorithm_parameters = useSelector((state)=> state.ml_algorithm_parameters);
   const ml_algorithm_target = useSelector((state)=> state.ml_algorithm_target);
-
+ 
   const [isInsertNameOpen, setIsInsertNameOpen] = React.useState(false);
   const [wasDataCopiedPipelineName, setWasDataCopiedPipelineName] = React.useState(false);
   const [wasDataLastModelTrainedCopy, setWasDataLastModelTrainedCopy] = React.useState(false);
@@ -194,7 +194,7 @@ export default function Tools(props) {
                                 <div className='options-page-container-item'>
                                     <p className="options-page-container-title">See explainability</p>
                                     <div className='options-page-btn'>
-                                        <Button variant="contained" disabled={trainedModel.length == 0} sx={{backgroundColor:"blue", color:"#fff"}} onClick={()=>{navigateToModelPage();}}>Explore</Button>
+                                        <Button variant="contained" disabled={trainedModel.length == 0 || selectedModelType == "DBSCAN"} sx={{backgroundColor:"blue", color:"#fff"}} onClick={()=>{navigateToModelPage();}}>Explore</Button>
                                     </div>
                                 </div>
                             </div>

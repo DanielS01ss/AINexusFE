@@ -348,7 +348,7 @@ const SavedPipelines = ()=>{
                   const parsedModelData = model;
                   
                     return(
-                        <div className="card" key={model}>
+                    <div className="card" key={model}>
                         <div className="card-header">
                             <img src={PipelineImage} width="150px" style={{"padding":"10px"}}/>
                             <div className="saved-pipelines-card-title">{model[1]}</div>

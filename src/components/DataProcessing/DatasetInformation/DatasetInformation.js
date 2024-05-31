@@ -63,18 +63,20 @@ export default function DatasetInformation () {
 
     const fetchDatasetInfo = (datasetId)=>{
       axios.get(DATASET_FETCH_DATASET_INFO(datasetId))
-      .then(resp => { setFetchedDatasetInfo(resp.data); setIsLoading(false)})
+      .then(resp => { setFetchedDatasetInfo(resp.data);  console.log(resp.data); setIsLoading(false)})
       .catch(err => {console.log(err)})
     }
 
     const fetchDatasetSnippet = (datasetId) =>{
       axios.get(DATASET_FETCH_DATASET_SNIPPET(datasetId))
-      .then(resp => { setsnippet(resp.data); setIsLoading(false) })
+      .then(resp => { console.log("resp.data:"); console.log(resp.data); setsnippet(resp.data); setIsLoading(false) })
       .catch(err => {console.log(err)})
     }
 
     const populateColumns = ()=>{
 
+      
+      
       if(snippet.length != 0){
         const sampleObjectKeys = Object.keys(snippet[0]);
         const newColumnsList = sampleObjectKeys.map((id)=>{
@@ -87,6 +89,7 @@ export default function DatasetInformation () {
           }
           return newObj;
         });
+
         setColumns(newColumnsList)
       }
         
@@ -147,7 +150,7 @@ export default function DatasetInformation () {
                 <div>Loading...</div>
               </>
             }
-            {!isLoading&&  
+            {!isLoading &&  
                 <div className="data-set-info-section" style={{padding:"10px"}}>
                   <p className="about-dataset-text">About Dataset</p>
                   <p> &nbsp; &nbsp;  {fetchedDatasetInfo.about}</p>
@@ -179,11 +182,11 @@ export default function DatasetInformation () {
                                     >
                                     {column.label}
                                     </TableCell>
-                                ))}
+                                ))} 
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {rows
+                                 {rows
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row) => {
                                     return (
@@ -200,7 +203,7 @@ export default function DatasetInformation () {
                                         })}
                                     </TableRow>
                                     );
-                                })}
+                                })} 
                             </TableBody>
                             </Table>
                         </TableContainer>
@@ -220,7 +223,7 @@ export default function DatasetInformation () {
                       
                   </div>
               </div>
-            }
+            } 
         </div>
     )
 }

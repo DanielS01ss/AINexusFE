@@ -89,7 +89,10 @@ export default memo(({ data, isConnectable }) => {
 
   useEffect(()=>{
     populateRows(dataFeaturing);
+    
   },[dataFeaturing])
+
+
 
   return (
     <div style={{ width:"500px", borderRadius:"5%",padding:"10px",border:"1px solid #fa8219" }}>

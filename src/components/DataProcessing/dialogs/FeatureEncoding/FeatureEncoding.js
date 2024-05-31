@@ -145,10 +145,6 @@ export default function FeatureEncoding(props){
       const allTargetEncodingColumns = [];
       const allOneHotEncodingColumns = [];
 
-      console.log("Before Debugger:");
-      debugger;
-      console.log("checkedLabelEncoding");
-      console.log(checkedLabelEncoding);
       
       for(const col of checkedLabelEncoding){
         if(col["type"] == "Label Encoding"){

@@ -20,7 +20,7 @@ import {useDispatch} from 'react-redux';
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import AIModelDialogInfo from "../AIModelsDialogInfo/AIModelDialogInfo";
 import { faTableColumns } from '@fortawesome/free-solid-svg-icons';
-import {addNode, setSelectedModelType, setNodes, resetSelectedModelType, setMLAlgorithmTarget} from "../../../../reducers/nodeSlice";
+import {addNode, setSelectedModelType, setNodes, resetSelectedModelType, setMLAlgorithmTarget, setMLAlgorithmParameters} from "../../../../reducers/nodeSlice";
 import {DATASET_FETCH_DATASET_SNIPPET} from "../../../../utils/apiEndpoints";
 import axios from "axios";
 
@@ -151,12 +151,14 @@ export default function AIModels (props) {
     }
 
     const setModel = ()=>{
+      console.log(checked[0]);
       dispatch(setSelectedModelType(checked[0]));
-    
+      
       dispatch(setMLAlgorithmTarget({
         "model_name":checked[0],
         "target_column":checkedTargetedColumns[0]
       }))
+      dispatch(setMLAlgorithmParameters({}));
     }
 
     const parseAndSetRows = (data)=>{
