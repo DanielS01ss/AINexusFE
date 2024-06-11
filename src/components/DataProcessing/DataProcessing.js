@@ -15,7 +15,7 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { styled } from '@mui/material/styles';
 import { START_PIPELINE, POST_PIPELINE_LOGS } from "../../utils/apiEndpoints";
-import { setTrainedModel, setIsTrainingStarted, setNodes,clearDataset, resetSelectedModelType, removeDataFeaturingColumns, setNormalizationColumns, setStandardizationColumns, setImputationAlgs,setConstantValueImputationColumns, setStoredConstantValueImputationValues, setMappedEdges,setMLAlgorithmTarget, setEdgeToDelete, setMappedNodes } from "../../reducers/nodeSlice";
+import { setLabelEncodingColumns, setTargetEncodingColumns, setOneHotEncodingColumnsReducer, setLogTransformationColumns, setOutlierRemovalColumns, setFeatureEncodingColumns, setTrainedModel, setIsTrainingStarted,  setNodes,clearDataset, resetSelectedModelType, removeDataFeaturingColumns, setNormalizationColumns, setStandardizationColumns, setImputationAlgs,setConstantValueImputationColumns, setStoredConstantValueImputationValues, setMappedEdges,setMLAlgorithmTarget, setEdgeToDelete, setMappedNodes } from "../../reducers/nodeSlice";
 import toast, { Toaster } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import {getToken} from "../../utils/getTokens";
@@ -49,6 +49,7 @@ function DataProcessing() {
   const target_encoding_columns = useSelector((state)=> state.target_encoding_columns);
   const one_hot_encoding_columns = useSelector((state)=> state.one_hot_encoding_columns);
   const ml_algorithm_target = useSelector((state)=> state.ml_algorithm_target);
+  const mappedEdges  = useSelector((state)=>state.edges);
   const [currentDate, setCurrentDate] = useState("");
   const [isPipelineStarted, setIsPipelineStarted] = useState(false);
   const [displayPipelineSteps, setDisplayPipelineSteps] = useState(false);
@@ -150,10 +151,8 @@ function DataProcessing() {
       email: email
     }
 
-    console.log("requestObj:");
-    console.log(requestObject);
-
-
+    
+  
   
     dispatch(setIsTrainingStarted(true));
     try{
@@ -227,6 +226,9 @@ function DataProcessing() {
 
       const operationsList = [];
       let operationObj;
+    
+
+
       for(const operation of orderOfOperations){
         if(operation == "node-2"){
           operationObj = {
@@ -335,11 +337,20 @@ function DataProcessing() {
       setTimeout(()=>{
         setActiveSteps([0,1]);
       },300)
-      //aici se fac request-urille
-      makeRequestForPipeline(operationsList);
+    
+     makeRequestForPipeline(operationsList);
   } 
 
+
   const handleDeletePipeline = ()=>{
+
+
+    let i = 100;
+    for(const theEdge of mappedEdges){
+      setTimeout(()=>{
+        dispatch(setEdgeToDelete(theEdge["id"]));
+      },200+i);
+    }
     dispatch(setNodes([]));
     dispatch(clearDataset());
     dispatch(resetSelectedModelType());
@@ -350,9 +361,13 @@ function DataProcessing() {
     dispatch(setMappedNodes([]));
     dispatch(setConstantValueImputationColumns([]));
     dispatch(setStoredConstantValueImputationValues([]));
-    dispatch(setEdgeToDelete(""));
-    dispatch(setMappedEdges([]));
     dispatch(setMLAlgorithmTarget({}));
+    dispatch(setFeatureEncodingColumns([]));
+    dispatch(setOutlierRemovalColumns([]));
+    dispatch(setLogTransformationColumns([]));
+    dispatch(setOneHotEncodingColumnsReducer([]));
+    dispatch(setTargetEncodingColumns([]));
+    dispatch(setLabelEncodingColumns([]));
 
     setTimeout(()=>{
       dispatch(setMappedEdges([]));
@@ -366,8 +381,6 @@ function DataProcessing() {
       dispatch(setMappedNodes([]));
       dispatch(setConstantValueImputationColumns([]));
       dispatch(setStoredConstantValueImputationValues([]));
-      dispatch(setEdgeToDelete(""));
-      dispatch(setMappedEdges([]));
       dispatch(setMLAlgorithmTarget({}));
     },500)
   }

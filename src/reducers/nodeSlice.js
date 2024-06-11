@@ -21,10 +21,18 @@ const initialState = {
     target_encoding_columns:[],
     one_hot_encoding_columns:[],
     edges:[],
+    spawned_pipeline_edges:[],
     trainedModel:"",
     ml_algorithm_target:{},
     ml_algorithm_parameters:{},
-    is_training_started:false
+    is_training_started:false,
+    selectedDatasetGeneration:[],
+    selectedProblemTypeGeneration:"",
+    selectedTargetColumnGeneration:[],
+    generatedPipelines:[],
+    storedModeSelected:"",
+    numberOfPipelinesToGenerate:0,
+    isFeedbackOpen: false
 }
 
 export const nodeSlice = createSlice({
@@ -43,6 +51,30 @@ export const nodeSlice = createSlice({
                 state.nodes.push(newNode);
             }
             
+        },
+        setIsStoredFeedbackOpen:(state, action)=>{
+            state.isFeedbackOpen = action.payload;
+        },
+        setNumberOfPipelinesToGenerate:(state, action)=>{
+            state.numberOfPipelinesToGenerate = action.payload;
+        },
+        setStoredModeSelected:(state, action)=>{
+            state.storedModeSelected = action.payload;
+        },
+        setSelectedDatasetGeneration:(state, action)=>{
+            state.selectedDatasetGeneration = action.payload;
+        },
+        setSelectedProblemTypeGeneration:(state, action)=>{
+            state.selectedProblemTypeGeneration = action.payload;
+        },
+        setGeneratedPipelines: (state, action)=>{
+            state.generatedPipelines = action.payload;
+        },
+        setSelectedTargetColumnGeneration: (state, action) =>{
+            state.selectedTargetColumnGeneration = action.payload;
+        },
+        setSpawnedPipelineEdges:(state, action)=>{
+            state.spawned_pipeline_edges = action.payload;
         },
         setLabelEncodingColumns:(state,action)=>{
             state.label_encoding_columns = action.payload;
@@ -139,6 +171,6 @@ export const nodeSlice = createSlice({
 });
 
 
-export const {setFeatureEncodingColumns, setOneHotEncodingColumnsReducer, setTargetEncodingColumns, setLabelEncodingColumns, setLogTransformationColumns, setOutlierRemovalColumns, setMLAlgorithmParameters, setTrainedModel, setIsTrainingStarted, setMLAlgorithmTarget,setStoredConstantValueImputationValues, setConstantValueImputationColumns,setMappedNodes, setMappedEdges, resetSelectedModelType, resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete, clearDataset, removePreProcessingNodes} = nodeSlice.actions
+export const { setStoredModeSelected, setIsStoredFeedbackOpen, setNumberOfPipelinesToGenerate,  setGeneratedPipelines, setSelectedTargetColumnGeneration ,setSelectedProblemTypeGeneration, setSelectedDatasetGeneration, setSpawnedPipelineEdges, setFeatureEncodingColumns, setOneHotEncodingColumnsReducer, setTargetEncodingColumns, setLabelEncodingColumns, setLogTransformationColumns, setOutlierRemovalColumns, setMLAlgorithmParameters, setTrainedModel, setIsTrainingStarted, setMLAlgorithmTarget,setStoredConstantValueImputationValues, setConstantValueImputationColumns,setMappedNodes, setMappedEdges, resetSelectedModelType, resetNormalizationAndStandardization, removeDataFeaturingColumns, addNode,setNodes,removeDataset,removeNode , addDataset, addAlgorithm, setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs, setEdgeToDelete, clearDataset, removePreProcessingNodes} = nodeSlice.actions
 
 export default nodeSlice.reducer;

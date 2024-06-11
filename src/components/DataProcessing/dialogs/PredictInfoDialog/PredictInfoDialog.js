@@ -83,7 +83,7 @@ const blockSuccess = (msg)=>{
                         To predict please use the following endpoint:
                     </div>
                     <div className='options-page-name-container' title={"http://localhost:8086/predict"} > {truncateString("http://localhost:8086/predict")} {wasModelCopied? <CheckIcon className='copy-icon' style={{"color":"green" , "fontSize":"1.4rem", "fontWeight":"bold"}} /> : <ContentCopyIcon className='copy-icon' onClick={()=>{copyToClipboard(props.selectedModel); setWasModelCopied(true); setTimeout(()=>{setWasModelCopied(false)},1000)}}/> }</div> 
-                    <div style={{"padding":"20px"}}>With the following body</div>
+                    <div style={{"padding":"20px"}}>Request body template ( example )</div>
                      <div className='predict-dialog-body-example'>
                      METHOD : POST
                      <pre><code>{`${JSON.stringify(data, null, 2)}`}</code></pre>

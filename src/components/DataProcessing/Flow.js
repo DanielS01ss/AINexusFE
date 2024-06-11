@@ -11,7 +11,7 @@ import ModelTraining from './custom_nodes/ModelTraining';
 import CustomEdge from "./custom_edges/CustomEdge.js";
 import LogTransformation from './custom_nodes/LogTransformation.js';
 import {  useSelector } from "react-redux/es/hooks/useSelector";
-import {setMappedNodes, setMappedEdges} from "../../reducers/nodeSlice";
+import {setMappedNodes, setMappedEdges, setSpawnedPipelineEdges} from "../../reducers/nodeSlice";
 import {useDispatch} from 'react-redux';
 import FeatureEncoding from './custom_nodes/FeatureEncoding.js';
 
@@ -20,6 +20,7 @@ function Flow() {
   const nodeTypes = useMemo(() => ({ dataSet: Dataset , featureSelection:FeatureSelection, normalization:Normalization, dataImputation:DataImputation, modelTraining:ModelTraining, outlierRemoval:OutlierRemoval, logTransformation: LogTransformation, featureEncoding:FeatureEncoding}), []);
   const edgeTypes = useMemo(() => ({ special: CustomEdge }), []);
   const storedNodes = useSelector((state)=>state.nodes);
+  const spawnedPipelineEdges = useSelector((state)=> state.spawned_pipeline_edges);
   const storedDataset = useSelector((state)=>state.selectedDataset);
   const storedEdges = useSelector((state)=> state.edges);
   const edgeToDelete = useSelector((state)=>state.edgeToDelete);
@@ -124,6 +125,7 @@ function Flow() {
       return;
     }
     
+   
     for(let nodeType of nodeData){
       
 
@@ -217,8 +219,7 @@ function Flow() {
         ); 
       } 
      
-
-      xPosition = xPosition+800;
+      xPosition = xPosition+1000;
     }
     
     setNodes(newNodes);
@@ -288,7 +289,7 @@ function Flow() {
       mappedEdgeInfo.push(edgeInfo);
     }
     
-   dispatch(setMappedEdges(mappedEdgeInfo));
+  //  dispatch(setMappedEdges(mappedEdgeInfo));
    setTheNodes();
   } 
 
@@ -299,7 +300,6 @@ function Flow() {
   },[storedNodes])
 
   useEffect(()=>{  
-    
     deleteOneEdge(edgeToDelete);
   },[edgeToDelete])
 
@@ -320,16 +320,25 @@ function Flow() {
     if(firstRender == true){
       setFirstRender(false);
        setEdges(storedEdges);
-    }
+    } 
+   
   },[storedEdges])
 
+  
+  const handleSpawnPipelineEdgesForGeneratedPipeline = ()=>{
 
-  // ### IMPORTANT - AICI ESTE CODUL CU CARE SPAWNEZI UN EDGE #####
-  // useEffect(()=>{
-  //   setTimeout(()=>{
-  //      onConnect({source: 'node-2', sourceHandle: 'b', target: 'node-3', targetHandle: 'a'});
-  //   },10000)
-  // },[])
+    for(const spawnEdge of spawnedPipelineEdges){
+      onConnect(spawnEdge);
+    }
+
+    dispatch(setSpawnedPipelineEdges([]));
+  }
+
+   useEffect(()=>{
+    if(spawnedPipelineEdges.length!=0){
+      handleSpawnPipelineEdgesForGeneratedPipeline();
+    }
+   },[spawnedPipelineEdges])
 
     return (
       <div style={{ width: '96vw', height: '100vh' }}>

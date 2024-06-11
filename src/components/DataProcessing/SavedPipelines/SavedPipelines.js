@@ -31,7 +31,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PipelineImage from "../../../assets/images/pipeline-logo.png";
 import IconButton from '@mui/material/IconButton';
-import { setNodes, addDataset,setSelectedModelType, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs,setMappedNodes,setConstantValueImputationColumns,setStoredConstantValueImputationValues, setMappedEdges, setMLAlgorithmTarget,setMLAlgorithmParameters} from "../../../reducers/nodeSlice";
+import { setLogTransformationColumns,setTargetEncodingColumns, setFeatureEncodingColumns, setLabelEncodingColumns,setOneHotEncodingColumnsReducer, setNodes, addDataset,setSelectedModelType, setOutlierRemovalColumns, setSelectedDataFeaturingColumns,setNormalizationColumns,setStandardizationColumns,setImputationAlgs,setMappedNodes,setConstantValueImputationColumns,setStoredConstantValueImputationValues, setMappedEdges, setMLAlgorithmTarget,setMLAlgorithmParameters} from "../../../reducers/nodeSlice";
 import { useDispatch } from "react-redux";
 
 const SavedPipelines = ()=>{
@@ -82,7 +82,7 @@ const SavedPipelines = ()=>{
     );
 
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState(17);
 
     const searchListByPipelineName = (list, str)=> {
     
@@ -167,20 +167,54 @@ const SavedPipelines = ()=>{
         return val.join(" , ");
       }
 
+      const getObjectData = (objArr)=>{
+        const result = objArr.map((obj)=>{
+          return obj["column_name"];
+        });
+        
+        return result;
+      }
+
       const parsePipelineData = (pipeline_data)=>{
-    
+     
+        
         const parsedData = JSON.parse(pipeline_data);
         const allNodes = getTheNodes(parsedData["nodes"]);
         const theDataset = getTheDataset(parsedData["selectedDataset"]);
         const numberOfNodes = parsedData["nodes"].length;
-        const constantValueImputationColumns = getParsedVectorData(parsedData["constant_value_imputation_columns"]);
-        const constantValueImputationValues = getParsedVectorData(parsedData["constant_value_imputation_values"]);
+        const constantValueImputationColumns = getParsedVectorData(getObjectData(parsedData["constant_value_imputation_columns"]));
+        const constantValueImputationValues = getParsedVectorData(getObjectData(parsedData["constant_value_imputation_values"]));
         const imputationAlgorithms = getParsedVectorData(parsedData["imputationAlgs"]);
-        const standardizationColumns = getParsedVectorData(parsedData["standardizationColumns"]);
-        const normalizationColumns = getParsedVectorData(parsedData["normalizationColumns"]);
+        const standardizationColumns = getParsedVectorData(getObjectData(parsedData["standardizationColumns"]));
+        const normalizationColumns = getParsedVectorData(getObjectData(parsedData["normalizationColumns"]));
         const mlAlgorithm = parsedData["ml_algorithm_target"]["model_name"];
         const mlAlgorithmParameters = parsedData["ml_algorithm_parameters"];
+        let outlierRemoval = [];
+        let logTransformationColumns = [];
+        let featureEncodingColumns = [];
+        let labelEncodingColumns = [];
+        let oneHotEncodingColumns = [];
+        let targetEncodingColumns = [];
+        if(parsedData["outlier_removal_columns"]){
+          outlierRemoval = getParsedVectorData(getObjectData(parsedData["outlier_removal_columns"]));
+        } 
 
+        if(parsedData["log_transformation_columns"]){
+          logTransformationColumns = getParsedVectorData(getObjectData(parsedData["log_transformation_columns"]));
+        }
+        if(parsedData["feature_encoding_columns"]){
+          featureEncodingColumns = getParsedVectorData(getObjectData(parsedData["feature_encoding_columns"]));
+        }
+        if(parsedData["label_encoding_columns"]){
+          labelEncodingColumns = getParsedVectorData(getObjectData(parsedData["label_encoding_columns"]));
+        }
+        if(parsedData["one_hot_encoding_columns"]){
+          oneHotEncodingColumns = getParsedVectorData(getObjectData(parsedData["one_hot_encoding_columns"]));
+        }
+        if(parsedData["target_encoding_columns"]){
+          targetEncodingColumns = getParsedVectorData(getObjectData(parsedData["target_encoding_columns"]));
+        }
+        
         const pipelineData = [
           {"Nodes": allNodes},
           {"Dataset": theDataset},
@@ -190,6 +224,12 @@ const SavedPipelines = ()=>{
           {"Imputation Algorithms": imputationAlgorithms},
           {"Standardization Columns": standardizationColumns},
           {"Normalization Columns": normalizationColumns},
+          {"Outlier Removal": outlierRemoval},
+          {"Log Transformation": outlierRemoval},
+          {"Feature Encoding": featureEncodingColumns},
+          {"Label Encoding": labelEncodingColumns},
+          {"One Hot Encoding": oneHotEncodingColumns},
+          {"Target Encoding": targetEncodingColumns},
           {"ML Algorithm": mlAlgorithm},
           {"ML Algorithm Parameters": JSON.stringify(mlAlgorithmParameters)},
        ];
@@ -200,7 +240,7 @@ const SavedPipelines = ()=>{
       const parseThePipelineData = (pipelineData)=>{
         
         const processedPipeline = {};
-
+        
         for (const pipeline_instance of pipelineData){
           processedPipeline[pipeline_instance[1]] = parsePipelineData(pipeline_instance[2]);
         }
@@ -251,7 +291,7 @@ const SavedPipelines = ()=>{
 
     const instiantiateThePipeline = (pipeline_obj)=>{
         const parsedPipelineData = JSON.parse(pipeline_obj);
-        
+  
         if(parsedPipelineData["nodes"]){
           dispatch(setNodes(parsedPipelineData["nodes"]));
         } 
@@ -291,6 +331,26 @@ const SavedPipelines = ()=>{
         if(parsedPipelineData["ml_algorithm_parameters"]){
           dispatch(setMLAlgorithmParameters(parsedPipelineData["ml_algorithm_parameters"]));
         }
+        if(parsedPipelineData["outlier_removal_columns"]){
+          dispatch(setOutlierRemovalColumns(parsedPipelineData["outlier_removal_columns"]));
+        }
+        if(parsedPipelineData["log_transformation_columns"]){
+          dispatch(setLogTransformationColumns(parsedPipelineData["log_transformation_columns"]));
+        }
+        if(parsedPipelineData["feature_encoding_columns"]){
+          dispatch(setFeatureEncodingColumns(parsedPipelineData["log_transformation_columns"]));
+        }
+        if(parsedPipelineData["label_encoding_columns"]){
+          dispatch(setLabelEncodingColumns(parsedPipelineData["label_encoding_columns"]));
+        }
+        if(parsedPipelineData["target_encoding_columns"]){
+          dispatch(setTargetEncodingColumns(parsedPipelineData["target_encoding_columns"]));
+        }
+        if(parsedPipelineData["one_hot_encoding_columns"]){
+          dispatch(setOneHotEncodingColumnsReducer(parsedPipelineData["one_hot_encoding_columns"]));
+        }
+
+
         blockSuccess("The pipeline was loaded successfully! Head to home to see it!");
     }
 
@@ -365,7 +425,7 @@ const SavedPipelines = ()=>{
                                 <AccordionDetails>
                               
                     <Paper sx={{ width: '100%',marginTop:"30px", overflow: 'hidden' }}>
-                      <TableContainer sx={{ maxHeight: 940 }}>
+                      <TableContainer sx={{ maxHeight: 1940 }}>
                           <Table stickyHeader aria-label="sticky table">
                           <TableHead>
                               <TableRow>

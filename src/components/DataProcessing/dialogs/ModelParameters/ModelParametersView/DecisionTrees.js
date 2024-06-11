@@ -18,7 +18,6 @@ import Button from '@mui/material/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { setMLAlgorithmParameters } from "../../../../../reducers/nodeSlice";
-import { useEdges } from "reactflow";
 
 const CustomNumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
     return (

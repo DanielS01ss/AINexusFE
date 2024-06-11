@@ -93,10 +93,7 @@ export default memo(({ data, isConnectable }) => {
     }
   }
 
-  useEffect(()=>{
-    console.log("label encoding columns:");
-    console.log(label_encoding_columns);
-  },[rows])
+
 
   return (
     <div style={{ width:"500px", borderRadius:"5%",padding:"10px",border:"1px solid #4a71ff" }}>

@@ -56,6 +56,7 @@ export default memo(({ data, isConnectable }) => {
     if(datasetSelected && datasetSelected.length!=0){
       fetchDatasetInfo(datasetSelected[0].id);
     }
+
   },[datasetSelected])
 
 
@@ -89,7 +90,7 @@ export default memo(({ data, isConnectable }) => {
       <Handle
         type="source"
         position={Position.Right}
-        id="c"
+        id="b"
         style={{padding:"10px",border:"3px solid yellow"}}
         isConnectable={isConnectable}
       />

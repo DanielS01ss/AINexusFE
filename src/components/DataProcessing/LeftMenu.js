@@ -406,29 +406,7 @@ export default function MiniDrawer() {
                   <ListItemText primary={"Manage API Keys"} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
             </ListItem>
-            <ListItem key={"Block Hub"} disablePadding sx={{ display: 'block' }} onClick={()=>{setIsManageKeysOpen(true)}}>
-              <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
-                    px: 2.5,
-                    color:"white"
-                  }}
-                  key={4} 
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : 'auto',
-                      justifyContent: 'center',
-                      color:"white"
-                    }}
-                  >
-                   <GridViewIcon/>
-                  </ListItemIcon>
-                  <ListItemText primary={"Block Hub"} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-            </ListItem>
+       
         </List>
       </Drawer>
       <Toaster/>

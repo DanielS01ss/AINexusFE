@@ -43,7 +43,14 @@ export default function Tools(props) {
   const constant_value_imputation_values = useSelector((state)=> state.constant_value_imputation_values);
   const ml_algorithm_parameters = useSelector((state)=> state.ml_algorithm_parameters);
   const ml_algorithm_target = useSelector((state)=> state.ml_algorithm_target);
- 
+  const outlier_removal_columns = useSelector((state)=> state.outlier_removal_columns);
+  const log_transformation_columns = useSelector((state)=> state.log_transformation_columns);
+  const feature_encoding_columns = useSelector((state)=> state.feature_encoding_columns);
+  const label_encoding_columns = useSelector((state)=> state.label_encoding_columns);
+  const target_encoding_columns = useSelector((state)=> state.target_encoding_columns);
+  const one_hot_encoding_columns = useSelector((state)=> state.one_hot_encoding_columns);
+
+
   const [isInsertNameOpen, setIsInsertNameOpen] = React.useState(false);
   const [wasDataCopiedPipelineName, setWasDataCopiedPipelineName] = React.useState(false);
   const [wasDataLastModelTrainedCopy, setWasDataLastModelTrainedCopy] = React.useState(false);
@@ -98,7 +105,7 @@ export default function Tools(props) {
     if(the_pipeline_name.length == 0 ){
         return;
     }
-
+ 
     const collectedPipelineData = {
         nodes:[],
         selectedDataset:[],
@@ -110,6 +117,12 @@ export default function Tools(props) {
         mappedNodes:[],
         constant_value_imputation_columns:[],
         constant_value_imputation_values:[],
+        outlier_removal_columns:[],
+        log_transformation_columns:[],
+        feature_encoding_columns:[],
+        label_encoding_columns:[],
+        target_encoding_columns:[],
+        one_hot_encoding_columns:[],
         edges:[],
         ml_algorithm_target:{},
         ml_algorithm_parameters:{}
@@ -125,6 +138,12 @@ export default function Tools(props) {
     collectedPipelineData["mappedNodes"] = mappedNodes;
     collectedPipelineData["constant_value_imputation_columns"] = constant_value_imputation_columns;
     collectedPipelineData["constant_value_imputation_values"] = constant_value_imputation_values;
+    collectedPipelineData["outlier_removal_columns"] = outlier_removal_columns;
+    collectedPipelineData["log_transformation_columns"] = log_transformation_columns;
+    collectedPipelineData["feature_encoding_columns"] = feature_encoding_columns;
+    collectedPipelineData["label_encoding_columns"] = label_encoding_columns;
+    collectedPipelineData["one_hot_encoding_columns"] = one_hot_encoding_columns;
+    collectedPipelineData["target_encoding_columns"] = target_encoding_columns;
     collectedPipelineData["edges"] = edges;
     collectedPipelineData["ml_algorithm_target"] = ml_algorithm_target;
     collectedPipelineData["ml_algorithm_parameters"] = ml_algorithm_parameters;

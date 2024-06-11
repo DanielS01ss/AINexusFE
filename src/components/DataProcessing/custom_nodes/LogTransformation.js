@@ -79,6 +79,11 @@ export default memo(({ data, isConnectable }) => {
     }
   }
 
+  useEffect(()=>{
+    console.log("rows:");
+    console.log(rows);
+  },[rows])
+
   return (
     <div style={{ width:"500px", borderRadius:"5%",padding:"10px",border:"1px solid #ff08f7" }}>
         <Handle

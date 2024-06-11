@@ -151,7 +151,7 @@ export default function AIModels (props) {
     }
 
     const setModel = ()=>{
-      console.log(checked[0]);
+    
       dispatch(setSelectedModelType(checked[0]));
       
       dispatch(setMLAlgorithmTarget({

@@ -63,13 +63,13 @@ export default function DatasetInformation () {
 
     const fetchDatasetInfo = (datasetId)=>{
       axios.get(DATASET_FETCH_DATASET_INFO(datasetId))
-      .then(resp => { setFetchedDatasetInfo(resp.data);  console.log(resp.data); setIsLoading(false)})
+      .then(resp => { setFetchedDatasetInfo(resp.data);  setIsLoading(false)})
       .catch(err => {console.log(err)})
     }
 
     const fetchDatasetSnippet = (datasetId) =>{
       axios.get(DATASET_FETCH_DATASET_SNIPPET(datasetId))
-      .then(resp => { console.log("resp.data:"); console.log(resp.data); setsnippet(resp.data); setIsLoading(false) })
+      .then(resp => { setsnippet(resp.data); setIsLoading(false) })
       .catch(err => {console.log(err)})
     }
 
